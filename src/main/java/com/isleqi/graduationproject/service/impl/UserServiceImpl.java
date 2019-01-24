@@ -1,29 +1,16 @@
 package com.isleqi.graduationproject.service.impl;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
+import com.isleqi.graduationproject.dao.mappers.UserAuthMapper;
+import com.isleqi.graduationproject.dao.mappers.UserMapper;
+import com.isleqi.graduationproject.domain.UserAuth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.isleqi.graduationproject.component.common.dao.BaseDao;
-import com.isleqi.graduationproject.dao.UserDao;
 import com.isleqi.graduationproject.domain.User;
 import com.isleqi.graduationproject.service.UserService;
 
@@ -33,7 +20,9 @@ import com.isleqi.graduationproject.service.UserService;
 public class UserServiceImpl  implements UserService{
 
 	@Autowired
-	private UserDao userDao;
+	private UserMapper userMapper;
+	@Autowired
+	private UserAuthMapper userAuthMapper;
 
 
 	@Override
@@ -41,11 +30,21 @@ public class UserServiceImpl  implements UserService{
 		return null;
 	}
 
-
-
 	@Override
 	public Page<User> listByPage(Map<String, String> params, Pageable pageable) {
 		return null;
+	}
+
+	@Override
+	@Transactional
+	public int saveUser(User user, UserAuth userAuth) {
+		int result=0;
+		userMapper.insertSelective(user);
+		int userId=user.getId();
+		userAuth.setUserId(userId);
+		result=userAuthMapper.insertSelective(userAuth);
+		return result;
+
 	}
 
 

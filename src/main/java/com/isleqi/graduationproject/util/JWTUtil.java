@@ -1,5 +1,8 @@
 package com.isleqi.graduationproject.util;
 
+import com.alibaba.fastjson.JSONObject;
+import com.isleqi.graduationproject.component.common.Constant;
+import com.isleqi.graduationproject.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -60,12 +63,23 @@ public class JWTUtil {
      * @return
      */
     public static SecretKey generalKey(){
-        String stringKey = "7786df7fc3a34e26a61c034d5ec8245d";
+        String stringKey = Constant.JWT_SECRET;
         byte[] encodedKey = Base64.decodeBase64(stringKey);
-        System.out.println(encodedKey);
-        System.out.println(Base64.encodeBase64URLSafeString(encodedKey));//7786df7fc3a34e26a61c034d5ec8245d
+
         SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");// 根据给定的字节数组使用AES加密算法构造一个密钥，使用 encodedKey中的始于且包含 0 到前 leng 个字节这是当然是所有。
         return key;
+    }
+
+    /**
+     * 生成subject信息
+     * @param user
+     * @return
+     */
+    public static String generalSubject(User user){
+        JSONObject jo = new JSONObject();
+        jo.put("userId", user.getId());
+        jo.put("userName", user.getUserName());
+        return jo.toJSONString();
     }
 
 

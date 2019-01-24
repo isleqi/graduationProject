@@ -32,7 +32,7 @@
       #{userIconUrl,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{editTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.User" >
+  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.User" useGeneratedKeys="true" keyProperty="id" >
     insert into user_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

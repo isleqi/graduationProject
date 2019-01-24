@@ -63,6 +63,13 @@ public class Response implements Serializable {
         return response;
     }
 
+    public static Response successResponse() {
+        Response response = new Response();
+        response.setCode(ResponseEnmus.SUCCESS.getCode());
+        response.setMessage(ResponseEnmus.SUCCESS.getMessage());
+        return response;
+    }
+
     public static Response successResponseWithData(Object data) {
         Response response = new Response();
         response.setCode(ResponseEnmus.SUCCESS.getCode());

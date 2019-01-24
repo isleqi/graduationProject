@@ -22,4 +22,6 @@ public class RedisKeyPrefix {
 	 */
 	public static final String CACHE_MUSER_USERINFO = "cache:muser:userInfo:";
 
+	public  static  final String USER_TOKEN="user_token:";
+
 }

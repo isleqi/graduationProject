@@ -2,6 +2,7 @@ package com.isleqi.graduationproject.service;
 
 import java.util.Map;
 
+import com.isleqi.graduationproject.domain.UserAuth;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,10 +17,10 @@ public interface UserService{
 
 	User findByUsername(String username);
 
-	//Return changePwd(User entity, String pwd);
-
 	Page<User> listByPage(Map<String, String> params,Pageable pageable);
 
-	//Return saveUser(User user);
+	int saveUser(User user , UserAuth userAuth);
+
+
 	
 }
