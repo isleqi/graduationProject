@@ -21,6 +21,12 @@
     from user_auth
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectByIdentifier" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_auth
+    where identifier = #{identifier,jdbcType=VARCHAR}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from user_auth
     where id = #{id,jdbcType=INTEGER}
@@ -30,8 +36,7 @@
       identifier, credential, create_time, 
       edit_time)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{identityType,jdbcType=VARCHAR}, 
-      #{identifier,jdbcType=VARCHAR}, #{credential,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{editTime,jdbcType=TIMESTAMP})
+      #{identifier,jdbcType=VARCHAR}, #{credential,jdbcType=VARCHAR}, now(), now())
   </insert>
   <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.UserAuth">
     insert into user_auth
@@ -51,12 +56,8 @@
       <if test="credential != null">
         credential,
       </if>
-      <if test="createTime != null">
         create_time,
-      </if>
-      <if test="editTime != null">
         edit_time,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -74,12 +75,8 @@
       <if test="credential != null">
         #{credential,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="editTime != null">
-        #{editTime,jdbcType=TIMESTAMP},
-      </if>
+      now(),
+      now(),
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.isleqi.graduationproject.domain.UserAuth">
@@ -97,12 +94,8 @@
       <if test="credential != null">
         credential = #{credential,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="editTime != null">
-        edit_time = #{editTime,jdbcType=TIMESTAMP},
-      </if>
+        edit_time =now(),
+
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -112,8 +105,7 @@
       identity_type = #{identityType,jdbcType=VARCHAR},
       identifier = #{identifier,jdbcType=VARCHAR},
       credential = #{credential,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      edit_time = #{editTime,jdbcType=TIMESTAMP}
+      edit_time =now()
     where id = #{id,jdbcType=INTEGER}
   </update>
 

@@ -13,9 +13,9 @@ public interface UserAuthMapper {
 
     int insertSelective(UserAuth record);
 
-
-
     UserAuth selectByPrimaryKey(Integer id);
+
+    UserAuth selectByIdentifier(String identifier);
 
     int updateByPrimaryKeySelective(UserAuth record);
 

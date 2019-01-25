@@ -29,7 +29,7 @@
       user_icon_url, create_time, edit_time
       )
     values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{userDes,jdbcType=VARCHAR}, 
-      #{userIconUrl,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{editTime,jdbcType=TIMESTAMP}
+      #{userIconUrl,jdbcType=VARCHAR},now(),now()}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.User" useGeneratedKeys="true" keyProperty="id" >
@@ -47,12 +47,11 @@
       <if test="userIconUrl != null" >
         user_icon_url,
       </if>
-      <if test="createTime != null" >
+
         create_time,
-      </if>
-      <if test="editTime != null" >
+
         edit_time,
-      </if>
+
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -67,12 +66,9 @@
       <if test="userIconUrl != null" >
         #{userIconUrl,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="editTime != null" >
-        #{editTime,jdbcType=TIMESTAMP},
-      </if>
+      now(),
+      now(),
+
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.isleqi.graduationproject.domain.User" >
@@ -87,11 +83,8 @@
       <if test="userIconUrl != null" >
         user_icon_url = #{userIconUrl,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
       <if test="editTime != null" >
-        edit_time = #{editTime,jdbcType=TIMESTAMP},
+        edit_time = now(),
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -101,8 +94,7 @@
     set user_name = #{userName,jdbcType=VARCHAR},
       user_des = #{userDes,jdbcType=VARCHAR},
       user_icon_url = #{userIconUrl,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      edit_time = #{editTime,jdbcType=TIMESTAMP}
+      edit_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
