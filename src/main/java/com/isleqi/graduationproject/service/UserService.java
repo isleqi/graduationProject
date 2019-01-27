@@ -25,7 +25,7 @@ public interface UserService{
 
 	int updateUserAuth(UserAuth userAuth);
 
-	Page<User> listByPage(Map<String, String> params,Pageable pageable);
+	//Page<User> listByPage(Map<String, String> params,Pageable pageable);
 
 	int saveUser(User user , UserAuth userAuth);
 

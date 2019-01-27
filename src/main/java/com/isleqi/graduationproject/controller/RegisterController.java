@@ -55,14 +55,10 @@ public class RegisterController {
         String credential=map.get("password");            //获取密码
 
         user.setUserName(userName);
-//        user.setCreateTime(new Date());
-//        user.setEditTime(new Date());
 
         userAuth.setIdentityType(identityType);
         userAuth.setIdentifier(account);
         userAuth.setCredential(credential);
-//        userAuth.setCreateTime(new Date());
-//        userAuth.setEditTime(new Date());
 
         int result=userService.saveUser(user,userAuth);
 

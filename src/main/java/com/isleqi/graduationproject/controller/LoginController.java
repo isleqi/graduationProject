@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPObject;
 import com.isleqi.graduationproject.component.common.GithubOauth2;
 import com.isleqi.graduationproject.component.common.RedisKeyPrefix;
+import com.isleqi.graduationproject.component.common.SinaOauth2;
 import com.isleqi.graduationproject.component.common.domain.Response;
 import com.isleqi.graduationproject.domain.User;
 import com.isleqi.graduationproject.domain.UserAuth;
@@ -81,7 +82,7 @@ public class LoginController {
             }
 
         }catch (Exception e){
-            logger.info("github登录失败："+e.toString());
+            logger.info("github登录失败："+e.getMessage());
            // System.out.println(e.toString());
             return  Response.errorResponse("github登录失败");
 
@@ -99,4 +100,68 @@ public class LoginController {
         response.sendRedirect(url);
        // return "redirect:"+url;
     }
+
+    @RequestMapping(value = "sinaOauth",method =RequestMethod.GET)
+    public Response sinaOauth(@RequestParam("code") String code){
+        try{
+            JSONObject msg= JSONObject.parseObject(SinaOauth2.getAccessToken(code));
+            String token=msg.getString("access_token");
+            String uid=msg.getString("uid");
+            String getUser=SinaOauth2.getUser(token,uid);
+            JSONObject user= JSONObject.parseObject(getUser);
+            System.out.println(getUser);
+
+            String userName=user.getString("name");
+            String id=user.getString("id");
+            String avatar_url=user.getString("avatar_large");
+
+
+
+            redisUtil.set(RedisKeyPrefix.USER_TOKEN+id,token);   //将token存入redis中
+
+            UserAuth userAuth= userService.findUserAuthByIdentifier(id);
+
+            if(userAuth==null){
+                UserAuth _userAuth=new UserAuth();
+
+                User userInfo=new User();
+
+                userInfo.setUserName(userName);
+                userInfo.setUserIconUrl(avatar_url);
+
+                _userAuth.setIdentityType("Sina");
+                _userAuth.setIdentifier(id);
+                _userAuth.setCredential(token);
+                int result= userService.saveUser(userInfo,_userAuth);
+                if(result==0){
+                    logger.info("Sina");
+                    return  Response.errorResponse("Sina用户信息保存失败");
+                }
+            }
+            else{
+                userAuth.setCredential(token);
+                userService.updateUserAuth(userAuth);
+            }
+
+        }catch (Exception e){
+            logger.info("Sina登录失败："+e.getMessage());
+            // System.out.println(e.toString());
+            return  Response.errorResponse("Sina登录失败");
+
+        }
+
+        return Response.successResponseWithData("Sina登录成功");
+
+
+    }
+
+    @RequestMapping(value = "FromSina",method =RequestMethod.GET)
+    public void fromSina(HttpServletResponse response) throws IOException {
+        // HttpClientUtil.doGet(GithubOauth2.getAuthUrl());
+        String url=SinaOauth2.getAuthUrl();
+        response.sendRedirect(url);
+        // return "redirect:"+url;
+    }
+
+
 }

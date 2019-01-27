@@ -54,10 +54,6 @@ public class UserServiceImpl  implements UserService{
 		return result;
 	}
 
-	@Override
-	public Page<User> listByPage(Map<String, String> params, Pageable pageable) {
-		return null;
-	}
 
 	@Override
 	@Transactional
