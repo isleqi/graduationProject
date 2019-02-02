@@ -1,7 +1,14 @@
 package com.isleqi.graduationproject.dao.mappers;
 
 import com.isleqi.graduationproject.domain.Question;
+import com.isleqi.graduationproject.domain.vo.QuestionVo;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Component;
 
+import java.util.List;
+
+@Component
+@Mapper
 public interface QuestionMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -10,6 +17,10 @@ public interface QuestionMapper {
     int insertSelective(Question record);
 
     Question selectByPrimaryKey(Integer id);
+
+    List<QuestionVo> selectByTagId(Integer tagId);
+
+    List<QuestionVo> selectQuesWithTag();
 
     int updateByPrimaryKeySelective(Question record);
 

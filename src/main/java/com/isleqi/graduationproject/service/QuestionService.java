@@ -1,18 +1,26 @@
 package com.isleqi.graduationproject.service;
 
+import com.github.pagehelper.PageInfo;
+import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.domain.Question;
+import com.isleqi.graduationproject.domain.vo.QuestionParamVo;
+import com.isleqi.graduationproject.domain.vo.QuestionVo;
 
 import java.util.List;
 
 public interface QuestionService {
 
-    void insert(Question question);
+    void insert(QuestionParamVo question) throws Exception;
 
-    void update(Question question);
+    void update(QuestionParamVo question);
 
-   List<Question> selectByTagId(int TagId);
+    PageBean<QuestionVo> getByTagId(int pageNum,int pageSize,int tagId);
 
-   List<Question> selectBySearch(String str);
+    PageBean<QuestionVo> getBySearch(int pageNum,int pageSize,String str);
+
+    PageBean<QuestionVo> getQuestionList(int pageNum, int pageSize);
+
+
 
 
 }

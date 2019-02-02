@@ -5,12 +5,12 @@ public class TagMap {
 
     private Integer tagId;
 
-    private Integer articleId;
+    private Integer quesId;
 
-    public TagMap(Integer id, Integer tagId, Integer articleId) {
+    public TagMap(Integer id, Integer tagId, Integer quesId) {
         this.id = id;
         this.tagId = tagId;
-        this.articleId = articleId;
+        this.quesId = quesId;
     }
 
     public TagMap() {
@@ -33,11 +33,11 @@ public class TagMap {
         this.tagId = tagId;
     }
 
-    public Integer getArticleId() {
-        return articleId;
+    public Integer getQuesId() {
+        return quesId;
     }
 
-    public void setArticleId(Integer articleId) {
-        this.articleId = articleId;
+    public void setQuesId(Integer quesId) {
+        this.quesId = quesId;
     }
 }

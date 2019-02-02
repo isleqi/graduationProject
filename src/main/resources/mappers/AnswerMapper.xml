@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.isleqi.graduationproject.dao.mappers.AnswerMapper" >
+  <resultMap id="BaseResultMap" type="com.isleqi.graduationproject.domain.Answer" >
+    <constructor >
+      <idArg column="ans_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="ques_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="like_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="comment_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="creat_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="edit_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.isleqi.graduationproject.domain.Answer" >
+    <constructor >
+      <idArg column="ans_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="ques_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="like_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="comment_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="creat_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="edit_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="ans_content" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ans_id, ques_id, user_id, like_num, comment_num, creat_time, edit_time
+  </sql>
+  <sql id="Blob_Column_List" >
+    ans_content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from answer
+    where ans_id = #{ansId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from answer
+    where ans_id = #{ansId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.isleqi.graduationproject.domain.Answer" >
+    insert into answer (ans_id, ques_id, user_id, 
+      like_num, comment_num, creat_time, 
+      edit_time, ans_content)
+    values (#{ansId,jdbcType=INTEGER}, #{quesId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{likeNum,jdbcType=INTEGER}, #{commentNum,jdbcType=INTEGER}, #{creatTime,jdbcType=TIMESTAMP}, 
+      #{editTime,jdbcType=TIMESTAMP}, #{ansContent,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.Answer" >
+    insert into answer
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ansId != null" >
+        ans_id,
+      </if>
+      <if test="quesId != null" >
+        ques_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="likeNum != null" >
+        like_num,
+      </if>
+      <if test="commentNum != null" >
+        comment_num,
+      </if>
+      <if test="creatTime != null" >
+        creat_time,
+      </if>
+      <if test="editTime != null" >
+        edit_time,
+      </if>
+      <if test="ansContent != null" >
+        ans_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ansId != null" >
+        #{ansId,jdbcType=INTEGER},
+      </if>
+      <if test="quesId != null" >
+        #{quesId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="likeNum != null" >
+        #{likeNum,jdbcType=INTEGER},
+      </if>
+      <if test="commentNum != null" >
+        #{commentNum,jdbcType=INTEGER},
+      </if>
+      <if test="creatTime != null" >
+        #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editTime != null" >
+        #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ansContent != null" >
+        #{ansContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.isleqi.graduationproject.domain.Answer" >
+    update answer
+    <set >
+      <if test="quesId != null" >
+        ques_id = #{quesId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="likeNum != null" >
+        like_num = #{likeNum,jdbcType=INTEGER},
+      </if>
+      <if test="commentNum != null" >
+        comment_num = #{commentNum,jdbcType=INTEGER},
+      </if>
+      <if test="creatTime != null" >
+        creat_time = #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editTime != null" >
+        edit_time = #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ansContent != null" >
+        ans_content = #{ansContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where ans_id = #{ansId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.isleqi.graduationproject.domain.Answer" >
+    update answer
+    set ques_id = #{quesId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      like_num = #{likeNum,jdbcType=INTEGER},
+      comment_num = #{commentNum,jdbcType=INTEGER},
+      creat_time = #{creatTime,jdbcType=TIMESTAMP},
+      edit_time = #{editTime,jdbcType=TIMESTAMP},
+      ans_content = #{ansContent,jdbcType=LONGVARCHAR}
+    where ans_id = #{ansId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.isleqi.graduationproject.domain.Answer" >
+    update answer
+    set ques_id = #{quesId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      like_num = #{likeNum,jdbcType=INTEGER},
+      comment_num = #{commentNum,jdbcType=INTEGER},
+      creat_time = #{creatTime,jdbcType=TIMESTAMP},
+      edit_time = #{editTime,jdbcType=TIMESTAMP}
+    where ans_id = #{ansId,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByQuesId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from answer
+    where ques_id= #{quesId} limit 1;
+  </select>
+
+</mapper>

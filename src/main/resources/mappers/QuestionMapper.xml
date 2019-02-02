@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.isleqi.graduationproject.dao.mappers.QuestionMapper" >
+
   <resultMap id="BaseResultMap" type="com.isleqi.graduationproject.domain.Question" >
     <constructor >
       <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
@@ -10,43 +11,63 @@
       <arg column="quesd_user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
     </constructor>
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.isleqi.graduationproject.domain.Question" >
-    <constructor >
-      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="ques_title" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="ques_des" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="ques_user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="quesd_user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="ques_tag_ids" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
-    </constructor>
+
+  <resultMap id="ResultMapQuestionVo" type="com.isleqi.graduationproject.domain.vo.QuestionVo" >
+
+    <id column="id" property="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="ques_title" property="quesTitle" jdbcType="VARCHAR" javaType="java.lang.String" />
+    <result column="ques_des" property="quesDes" jdbcType="VARCHAR" javaType="java.lang.String" />
   </resultMap>
+
+
+  <resultMap id="ResultMapWithTag" type="com.isleqi.graduationproject.domain.vo.QuestionVo" >
+
+      <id column="id" property="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="ques_title" property="quesTitle" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="ques_des" property="quesDes" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <collection property="tagList" ofType="Tag">
+        <id column="id" property="id"/>
+        <result column="tag_name" property="tagName"/>
+        <result column="num" property="num"/>
+      </collection>
+  </resultMap>
+
   <sql id="Base_Column_List" >
     id, ques_title, ques_des, ques_user_id, quesd_user_id
   </sql>
-  <sql id="Blob_Column_List" >
-    ques_tag_ids
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+
+  <select id="selectQuesWithTag" resultMap="ResultMapWithTag" >
+        select q.id,ques_title,ques_des,t.id,tag_name,num
+        from question as q,tagmap,tag as t
+        where q.id=ques_id and t.id=tag_id
+    </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from question
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectByTagId" resultType="com.isleqi.graduationproject.domain.vo.QuestionVo" parameterType="java.lang.Integer" >
+    select
+     q.id as id, ques_title as quesTitle, ques_des as quesDes
+    from question as q,tagmap as t
+    where  q.id=ques_id and tag_id = #{tagId}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from question
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.isleqi.graduationproject.domain.Question" >
+  <insert id="insert" parameterType="com.isleqi.graduationproject.domain.Question" useGeneratedKeys="true" keyProperty="id">
     insert into question (id, ques_title, ques_des, 
-      ques_user_id, quesd_user_id, ques_tag_ids
+      ques_user_id, quesd_user_id
       )
     values (#{id,jdbcType=INTEGER}, #{quesTitle,jdbcType=VARCHAR}, #{quesDes,jdbcType=VARCHAR}, 
-      #{quesUserId,jdbcType=INTEGER}, #{quesdUserId,jdbcType=INTEGER}, #{quesTagIds,jdbcType=LONGVARCHAR}
+      #{quesUserId,jdbcType=INTEGER}, #{quesdUserId,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.Question" >
+  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.Question" useGeneratedKeys="true" keyProperty="id" >
     insert into question
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -64,9 +85,7 @@
       <if test="quesdUserId != null" >
         quesd_user_id,
       </if>
-      <if test="quesTagIds != null" >
-        ques_tag_ids,
-      </if>
+
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -84,9 +103,7 @@
       <if test="quesdUserId != null" >
         #{quesdUserId,jdbcType=INTEGER},
       </if>
-      <if test="quesTagIds != null" >
-        #{quesTagIds,jdbcType=LONGVARCHAR},
-      </if>
+
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.isleqi.graduationproject.domain.Question" >
@@ -104,9 +121,7 @@
       <if test="quesdUserId != null" >
         quesd_user_id = #{quesdUserId,jdbcType=INTEGER},
       </if>
-      <if test="quesTagIds != null" >
-        ques_tag_ids = #{quesTagIds,jdbcType=LONGVARCHAR},
-      </if>
+
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -116,7 +131,7 @@
       ques_des = #{quesDes,jdbcType=VARCHAR},
       ques_user_id = #{quesUserId,jdbcType=INTEGER},
       quesd_user_id = #{quesdUserId,jdbcType=INTEGER},
-      ques_tag_ids = #{quesTagIds,jdbcType=LONGVARCHAR}
+
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.isleqi.graduationproject.domain.Question" >

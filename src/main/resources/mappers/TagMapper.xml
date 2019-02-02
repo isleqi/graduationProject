@@ -21,13 +21,13 @@
     delete from tag
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.isleqi.graduationproject.domain.Tag" >
+  <insert id="insert" parameterType="com.isleqi.graduationproject.domain.Tag" useGeneratedKeys="true" keyProperty="id" >
     insert into tag (id, tag_name, num
       )
     values (#{id,jdbcType=INTEGER}, #{tagName,jdbcType=VARCHAR}, #{num,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.Tag" >
+  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.Tag" useGeneratedKeys="true" keyProperty="id" >
     insert into tag
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
