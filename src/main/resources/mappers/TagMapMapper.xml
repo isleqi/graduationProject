@@ -9,6 +9,12 @@
         </constructor>
     </resultMap>
 
+    <resultMap id="ResultMapWithTag" type="com.isleqi.graduationproject.domain.vo.TagMapVo" >
+        <id column="id" property="tagMapId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+        <result column="tag_id" property="tagId" jdbcType="VARCHAR" javaType="java.lang.String" />
+        <association property="tag" column="tag_id" select="com.isleqi.graduationproject.dao.mappers.TagMapper.selectByPrimaryKey" />
+    </resultMap>
+
     <sql id="Base_Column_List">
     id, tag_id, ques_id
   </sql>
@@ -23,6 +29,12 @@
         tag_id,q.id,ques_title
         from tagmap as t,question as q
         where tag_id = #{tagId} and ques_id=q.id
+    </select>
+    <select id="selectAllTagByQuesId" resultMap="ResultMapWithTag" parameterType="java.lang.Integer">
+        select
+        tag_id
+        from tagmap,tag as t
+        where ques_id = #{quesId} and tag_id=t.id
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

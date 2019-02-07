@@ -3,6 +3,7 @@ package com.isleqi.graduationproject.dao.mappers;
 import com.isleqi.graduationproject.domain.Question;
 import com.isleqi.graduationproject.domain.Tag;
 import com.isleqi.graduationproject.domain.TagMap;
+import com.isleqi.graduationproject.domain.vo.TagMapVo;
 import com.isleqi.graduationproject.domain.vo.TagVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ public interface TagMapMapper {
 
     int updateByPrimaryKey(TagMap record);
 
-    List<Tag> selectAllTag(Integer quesId);
+    List<TagMapVo> selectAllTagByQuesId(Integer quesId);
 
     List<TagVo> selectQuestionByTagId(Integer tagId);
 }

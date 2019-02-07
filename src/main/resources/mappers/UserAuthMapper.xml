@@ -12,6 +12,12 @@
       <arg column="edit_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
     </constructor>
   </resultMap>
+
+  <resultMap id="ResultMapWithUser" type="com.isleqi.graduationproject.domain.vo.UserInfoVo" >
+    <id column="id" property="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" javaType="java.lang.String" />
+    <association property="user" column="user_id" select="com.isleqi.graduationproject.dao.mappers.UserMapper.selectByPrimaryKey" />
+  </resultMap>
   <sql id="Base_Column_List">
     id, user_id, identity_type, identifier, credential, create_time, edit_time
   </sql>
@@ -21,7 +27,15 @@
     from user_auth
     where id = #{id,jdbcType=INTEGER}
   </select>
+
   <select id="selectByIdentifier" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_auth
+    where identifier = #{identifier,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectUserInfoByIdentifier" parameterType="java.lang.String" resultMap="ResultMapWithUser">
     select
     <include refid="Base_Column_List" />
     from user_auth

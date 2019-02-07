@@ -7,9 +7,11 @@ import com.isleqi.graduationproject.dao.mappers.QuestionMapper;
 import com.isleqi.graduationproject.dao.mappers.TagMapMapper;
 import com.isleqi.graduationproject.domain.Answer;
 import com.isleqi.graduationproject.domain.Question;
+import com.isleqi.graduationproject.domain.Tag;
 import com.isleqi.graduationproject.domain.TagMap;
 import com.isleqi.graduationproject.domain.vo.QuestionParamVo;
 import com.isleqi.graduationproject.domain.vo.QuestionVo;
+import com.isleqi.graduationproject.domain.vo.TagMapVo;
 import com.isleqi.graduationproject.service.AnswerService;
 import com.isleqi.graduationproject.service.QuestionService;
 import org.slf4j.Logger;
@@ -95,13 +97,15 @@ public class QuestionServiceImpl implements QuestionService {
         ArrayList<QuestionVo> list=null;
 
         try {
-            list = (ArrayList<QuestionVo>) questionMapper.selectQuesWithTag();
+            list = (ArrayList<QuestionVo>) questionMapper.selectQuesWithAns();
             for (QuestionVo item:list) {
                 logger.info(item.getId().toString());
-                Answer ans=answerService.getByQuesId(item.getId());
-                if(ans!=null)
-                    logger.info(ans.getAnsId().toString());
-                item.setAnswer(ans);
+                List<TagMapVo> tagMapVos=tagMapMapper.selectAllTagByQuesId(item.getId());
+                List<Tag> tags=new ArrayList<>();
+                for(TagMapVo vo:tagMapVos){
+                    tags.add(vo.getTag());
+                }
+                item.setTagList(tags);
 
             }
 

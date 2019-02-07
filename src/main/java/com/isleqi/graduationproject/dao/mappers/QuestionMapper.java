@@ -20,7 +20,7 @@ public interface QuestionMapper {
 
     List<QuestionVo> selectByTagId(Integer tagId);
 
-    List<QuestionVo> selectQuesWithTag();
+    List<QuestionVo> selectQuesWithAns();
 
     int updateByPrimaryKeySelective(Question record);
 

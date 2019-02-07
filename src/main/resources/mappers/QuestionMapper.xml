@@ -20,26 +20,21 @@
   </resultMap>
 
 
-  <resultMap id="ResultMapWithTag" type="com.isleqi.graduationproject.domain.vo.QuestionVo" >
+  <resultMap id="ResultMapWithAns" type="com.isleqi.graduationproject.domain.vo.QuestionVo" >
 
       <id column="id" property="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <result column="ques_title" property="quesTitle" jdbcType="VARCHAR" javaType="java.lang.String" />
       <result column="ques_des" property="quesDes" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <collection property="tagList" ofType="Tag">
-        <id column="id" property="id"/>
-        <result column="tag_name" property="tagName"/>
-        <result column="num" property="num"/>
-      </collection>
+    <association property="answer" column="id" select="com.isleqi.graduationproject.dao.mappers.AnswerMapper.selectByQuesId" />
   </resultMap>
 
   <sql id="Base_Column_List" >
     id, ques_title, ques_des, ques_user_id, quesd_user_id
   </sql>
 
-  <select id="selectQuesWithTag" resultMap="ResultMapWithTag" >
-        select q.id,ques_title,ques_des,t.id,tag_name,num
-        from question as q,tagmap,tag as t
-        where q.id=ques_id and t.id=tag_id
+  <select id="selectQuesWithAns" resultMap="ResultMapWithAns" >
+        select id,ques_title,ques_des
+        from question
     </select>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >

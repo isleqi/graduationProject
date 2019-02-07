@@ -5,6 +5,7 @@ import java.util.Map;
 import com.isleqi.graduationproject.dao.mappers.UserAuthMapper;
 import com.isleqi.graduationproject.dao.mappers.UserMapper;
 import com.isleqi.graduationproject.domain.UserAuth;
+import com.isleqi.graduationproject.domain.vo.UserInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,10 +38,16 @@ public class UserServiceImpl  implements UserService{
 	}
 
 	@Override
-	public UserAuth findUserAuthByIdentifier(String identifier) {
-		UserAuth userAuth=userAuthMapper.selectByIdentifier(identifier);
-		return userAuth;
+	public UserInfoVo findUserInfoByIdentifiter(String identifier) {
+		return userAuthMapper.selectUserInfoByIdentifier(identifier);
 	}
+
+
+	@Override
+	public UserAuth findUserAuthByIdentifier(String identifier) {
+		return userAuthMapper.selectByIdentifier(identifier);
+	}
+
 
 	@Override
 	public int updateUser(User user) {

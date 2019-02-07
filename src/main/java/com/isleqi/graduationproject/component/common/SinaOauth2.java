@@ -12,7 +12,7 @@ public class SinaOauth2 {
 
     static String appKey = "524337518";
     static String appSecret = "bd5dc471062ac73d09fd1ba7d7129441";
-    static String redirect_URI = "http://127.0.0.1:8070/app/login/sinaOauth";
+    static String redirect_URI = "http://192.168.1.6:8070/app/login/sinaOauth";
 
 
     public static String getAccessToken(String code) {
