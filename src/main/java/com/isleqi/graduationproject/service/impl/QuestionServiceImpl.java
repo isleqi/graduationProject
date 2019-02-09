@@ -1,7 +1,6 @@
 package com.isleqi.graduationproject.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.dao.mappers.QuestionMapper;
 import com.isleqi.graduationproject.dao.mappers.TagMapMapper;

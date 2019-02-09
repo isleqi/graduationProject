@@ -4,8 +4,6 @@ import com.isleqi.graduationproject.domain.Answer;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 @Mapper
 public interface AnswerMapper {
@@ -17,13 +15,11 @@ public interface AnswerMapper {
 
     Answer selectByPrimaryKey(Integer ansId);
 
+    Answer selectByQuesId(Integer quesId);
+
     int updateByPrimaryKeySelective(Answer record);
 
     int updateByPrimaryKeyWithBLOBs(Answer record);
 
     int updateByPrimaryKey(Answer record);
-
-    Answer selectByQuesId(Integer quesId);
-
-    List<Answer> selectListByQuesId(Integer quesId);
 }

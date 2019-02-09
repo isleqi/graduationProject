@@ -10,6 +10,7 @@ import com.isleqi.graduationproject.domain.Tag;
 import com.isleqi.graduationproject.domain.vo.QuestionParamVo;
 import com.isleqi.graduationproject.domain.vo.QuestionVo;
 import com.isleqi.graduationproject.service.QuestionService;
+import com.isleqi.graduationproject.service.UserOperationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,12 @@ public class QuestionController {
     TagMapper tagMapper;
     @Autowired
     QuestionService questionService;
+    @Autowired
+    UserOperationService userOperationService;
+
 
     @RequestMapping(value = "add",method = RequestMethod.POST)
-    public Response addQuestion(@RequestBody QuestionParamVo questionParamVo){
+    public Response addQuestion(QuestionParamVo questionParamVo){
         try {
 
             questionService.insert(questionParamVo);
@@ -38,6 +42,19 @@ public class QuestionController {
             e.printStackTrace();
             return Response.errorResponse("添加问题失败");
         }
+    }
+
+    @RequestMapping(value = "follow",method = RequestMethod.GET)
+    public Response getTag(@RequestParam("userId") Integer userId,@RequestParam("quesId") Integer quesId){
+        try{
+            userOperationService.followQues(quesId,userId);
+            return Response.successResponse();
+        }
+       catch (Exception e){
+            logger.info(e.getMessage());
+            return Response.errorResponse("关注问题失败");
+       }
+
     }
 
     @RequestMapping(value = "getAllQuestion",method = RequestMethod.GET)
@@ -90,6 +107,8 @@ public class QuestionController {
 
         return null;
     }
+
+
 
 
 

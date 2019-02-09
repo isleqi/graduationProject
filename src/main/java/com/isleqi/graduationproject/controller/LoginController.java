@@ -2,15 +2,14 @@ package com.isleqi.graduationproject.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPObject;
-import com.isleqi.graduationproject.component.common.GithubOauth2;
-import com.isleqi.graduationproject.component.common.RedisKeyPrefix;
-import com.isleqi.graduationproject.component.common.SinaOauth2;
-import com.isleqi.graduationproject.component.common.WeChatOauth2;
+import com.isleqi.graduationproject.component.common.*;
 import com.isleqi.graduationproject.component.common.domain.Response;
 import com.isleqi.graduationproject.domain.User;
 import com.isleqi.graduationproject.domain.UserAuth;
+import com.isleqi.graduationproject.domain.vo.UserInfoVo;
 import com.isleqi.graduationproject.service.UserService;
 import com.isleqi.graduationproject.util.HttpClientUtil;
+import com.isleqi.graduationproject.util.JWTUtil;
 import com.isleqi.graduationproject.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +35,39 @@ public class LoginController {
     UserService userService;
 
     @RequestMapping(value = "submit", method = RequestMethod.POST)
-    public Response loginSubmit(@RequestBody String account, @RequestBody String password) {
+    public Response loginSubmit(@RequestParam("account") String account, @RequestParam("password") String password) {
         Response response = new Response();
-        return response;
+       UserAuth userAuth= userService.findUserAuthByIdentifier(account);
+       if(userAuth==null)
+           return Response.errorResponse("该账号未注册，请注册");
+       String psw=userAuth.getCredential();
+
+       if(psw.equals(password)){
+           UserInfoVo userInfoVo= userService.findUserInfoByIdentifiter(account);
+           User user =userInfoVo.getUser();
+           String subject= JWTUtil.generalSubject(user);
+           String token;
+           try {
+               token= JWTUtil.createJWT(Constant.JWT_ID,subject,Constant.JWT_TTL);
+           }catch (Exception e){
+               logger.debug("生成token失败："+e.toString());
+               return Response.errorResponse("登录失败");
+           }
+           //将token放入redis
+           if(redisUtil == null) {
+               logger.info("redisUtil为空");
+           }
+           redisUtil.set(RedisKeyPrefix.USER_TOKEN+token,account);
+           return Response.successResponseWithData(token);
+       }
+       else {
+           return  Response.errorResponse("密码错误");
+       }
+
     }
 
     @RequestMapping(value = "githubOauth",method =RequestMethod.GET)
-    public Response githubOauth(@RequestParam("code") String code){
+    public ModelAndView githubOauth(@RequestParam("code") String code){
         try{
             String access_token=  GithubOauth2.getAccessToken(code);
             System.out.println(access_token);
@@ -77,7 +102,7 @@ public class LoginController {
                int result= userService.saveUser(userInfo,_userAuth);
                if(result==0){
                    logger.info("GitHub用户信息保存失败");
-                 return  Response.errorResponse("GitHub用户信息保存失败");
+
                }
             }
             else{
@@ -85,14 +110,25 @@ public class LoginController {
                    userService.updateUserAuth(userAuth);
             }
 
+            ModelAndView mv = new ModelAndView();
+            Map<String, String> data=new HashMap();
+            data.put("token",token);
+            data.put("code","200");
+            mv.setViewName("/success");
+            mv.addObject("data", data);
+            return mv;
+
         }catch (Exception e){
             logger.info("github登录失败："+e.getMessage());
-           // System.out.println(e.toString());
-            return  Response.errorResponse("github登录失败");
 
+            ModelAndView mv = new ModelAndView();
+            Map<String, String> data=new HashMap<String, String>();
+            data.put("code","500");
+            mv.setViewName("/error");
+            mv.addObject("data", data);
+            return mv;
         }
 
-        return Response.successResponseWithData("Github登录成功");
 
 
     }
@@ -116,11 +152,11 @@ public class LoginController {
             System.out.println(getUser);
 
             String userName=user.getString("name");
-            String id=user.getString("id");
+            String id=user.getString("idstr");
             String avatar_url=user.getString("avatar_large");
             String description=user.getString("description");
 
-
+            logger.info(token);
 
 
             UserAuth userAuth= userService.findUserAuthByIdentifier(id);

@@ -10,4 +10,8 @@ public interface AnswerService {
 
     List<Answer> getListByQuesId(Integer quesId);
 
+    int addAnswer(Answer answer);
+
+    void updateAnswer(Answer answer);
+
 }

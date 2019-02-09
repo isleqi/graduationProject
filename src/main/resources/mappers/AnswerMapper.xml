@@ -38,6 +38,15 @@
     from answer
     where ans_id = #{ansId,jdbcType=INTEGER}
   </select>
+  <select id="selectByQuesId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from answer
+    where ques_id = #{quesId,jdbcType=INTEGER} limit 1
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from answer
     where ans_id = #{ansId,jdbcType=INTEGER}
@@ -153,14 +162,4 @@
       edit_time = #{editTime,jdbcType=TIMESTAMP}
     where ans_id = #{ansId,jdbcType=INTEGER}
   </update>
-
-  <select id="selectByQuesId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
-    select
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from answer
-    where ques_id= #{quesId} limit 1;
-  </select>
-
 </mapper>

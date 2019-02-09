@@ -38,15 +38,17 @@ public class UserController {
 
     @Autowired
     @Lazy
-    private RedisUtil redisUtil;
+   RedisUtil redisUtil;
 
     @RequestMapping(value="getBaseUserInfo",method =RequestMethod.POST)
-    public Response getBaseUserInfo(@RequestParam("token") String token){
+    public Response getBaseUserInfo(String token){
+        logger.info(token);
+       // String token_=JSONObject.parseObject(token).getString("token");
        String data= (String)redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
        System.out.println((data+"!!!!!!"));
        if(data==null||"".equals(data)){
            JSONObject msg=new JSONObject();
-           msg.put("code","403");
+           msg.put("code",403);
            msg.put("msg","token失效");
            return Response.successResponseWithData(msg);
        }
@@ -55,6 +57,8 @@ public class UserController {
            UserInfoVo userInfoVo=userService.findUserInfoByIdentifiter(data);
            return Response.successResponseWithData(userInfoVo);
        }
+
+
 
     }
 
