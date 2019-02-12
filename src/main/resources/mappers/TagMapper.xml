@@ -17,6 +17,18 @@
     from tag
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectBySearch" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from tag
+    where tag_name like CONCAT('%',#{str},'%')
+  </select>
+  <select id="selectByHot" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from tag
+    order by num limit 20
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from tag
     where id = #{id,jdbcType=INTEGER}

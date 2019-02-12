@@ -71,7 +71,7 @@ public class UserServiceImpl  implements UserService{
 		int userId=user.getId();
 		userAuth.setUserId(userId);
 		result=userAuthMapper.insertSelective(userAuth);
-		return result;
+		return userId;
 
 	}
 

@@ -57,7 +57,7 @@ public class LoginController {
            if(redisUtil == null) {
                logger.info("redisUtil为空");
            }
-           redisUtil.set(RedisKeyPrefix.USER_TOKEN+token,account);
+           redisUtil.set(RedisKeyPrefix.USER_TOKEN+token,user);
            return Response.successResponseWithData(token);
        }
        else {
@@ -89,7 +89,7 @@ public class LoginController {
             userInfo.setUserIconUrl(avatar_url);
 
 
-            redisUtil.set(RedisKeyPrefix.USER_TOKEN+token,id);   //将token存入redis中
+
 
            UserAuth userAuth= userService.findUserAuthByIdentifier(id);
 
@@ -99,16 +99,20 @@ public class LoginController {
                 _userAuth.setIdentityType("GitHub");
                 _userAuth.setIdentifier(id);
                 _userAuth.setCredential(token);
-               int result= userService.saveUser(userInfo,_userAuth);
-               if(result==0){
+               int userId= userService.saveUser(userInfo,_userAuth);
+               if(userId==0){
                    logger.info("GitHub用户信息保存失败");
 
                }
+                userInfo.setId(userId);
+
             }
             else{
                    userAuth.setCredential(token);
                    userService.updateUserAuth(userAuth);
+                userInfo.setId(userAuth.getUserId());
             }
+            redisUtil.set(RedisKeyPrefix.USER_TOKEN+token,userInfo);   //将token存入redis中
 
             ModelAndView mv = new ModelAndView();
             Map<String, String> data=new HashMap();
@@ -157,34 +161,36 @@ public class LoginController {
             String description=user.getString("description");
 
             logger.info(token);
+            User userInfo=new User();
 
+            userInfo.setUserName(userName);
+            userInfo.setUserIconUrl(avatar_url);
 
             UserAuth userAuth= userService.findUserAuthByIdentifier(id);
 
             if(userAuth==null){
                 UserAuth _userAuth=new UserAuth();
 
-                User userInfo=new User();
-
-                userInfo.setUserName(userName);
-                userInfo.setUserIconUrl(avatar_url);
 
                 _userAuth.setIdentityType("Sina");
                 _userAuth.setIdentifier(id);
                 _userAuth.setCredential(token);
-                int result= userService.saveUser(userInfo,_userAuth);
-                if(result==0){
-                    logger.info("Sina");
+                int userId= userService.saveUser(userInfo,_userAuth);
+                if(userId==0){
+                    logger.info("Sina用户信息保存失败");
+
                 }
+
             }
             else{
                 userAuth.setCredential(token);
                 userService.updateUserAuth(userAuth);
+                userInfo.setId(userAuth.getUserId());
             }
 
 
 
-            redisUtil.set(RedisKeyPrefix.USER_TOKEN+token,id);   //将token存入redis中
+            redisUtil.set(RedisKeyPrefix.USER_TOKEN+token,userInfo);   //将token存入redis中
 
 
 

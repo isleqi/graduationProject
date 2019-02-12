@@ -48,7 +48,7 @@ public class QuestionServiceImpl implements QuestionService {
 
         int quesId=question.getId();
 
-        int[] tagIds=questionParamVo.getTagIds();
+        Integer[] tagIds=questionParamVo.getTagIds();
        List<TagMap> list=new ArrayList<>();
         for(int tagId:tagIds){
             TagMap tagMap=new TagMap();

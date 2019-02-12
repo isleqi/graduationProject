@@ -97,7 +97,7 @@ public class UserController {
     public Response getBaseUserInfo(String token) {
         logger.info(token);
         // String token_=JSONObject.parseObject(token).getString("token");
-        String data = (String) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User data = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
         System.out.println((data + "!!!!!!"));
         if (data == null || "".equals(data)) {
             JSONObject msg = new JSONObject();
@@ -106,7 +106,7 @@ public class UserController {
             return Response.successResponseWithData(msg);
         } else {
             redisUtil.expire(RedisKeyPrefix.USER_TOKEN + token, Constant.JWT_TTL);
-            UserInfoVo userInfoVo = userService.findUserInfoByIdentifiter(data);
+            User userInfoVo = userService.findByUserId(data.getId());
             return Response.successResponseWithData(userInfoVo);
         }
     }

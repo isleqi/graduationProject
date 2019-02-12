@@ -15,7 +15,7 @@ public class QuestionParamVo implements Serializable {
 
     private Integer quesdUserId;
 
-    private int[] tagIds;
+    private Integer[] tagIds;
 
 
 
