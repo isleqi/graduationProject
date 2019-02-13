@@ -10,15 +10,19 @@ import java.util.List;
 
 public interface QuestionService {
 
-    void insert(QuestionParamVo question) throws Exception;
+    int insert(QuestionParamVo question) throws Exception;
 
     void update(QuestionParamVo question);
+
+   // Question getById(int id);
 
     PageBean<QuestionVo> getByTagId(int pageNum,int pageSize,int tagId);
 
     PageBean<QuestionVo> getBySearch(int pageNum,int pageSize,String str);
 
     PageBean<QuestionVo> getQuestionList(int pageNum, int pageSize);
+
+
 
 
 

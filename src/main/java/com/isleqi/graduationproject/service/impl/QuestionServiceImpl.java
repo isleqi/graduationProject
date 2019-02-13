@@ -36,7 +36,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public void insert(QuestionParamVo questionParamVo) throws Exception {
+    public int insert(QuestionParamVo questionParamVo) throws Exception {
 
         Question question = new Question();
         question.setQuesTitle(questionParamVo.getQuesTitle());
@@ -58,12 +58,16 @@ public class QuestionServiceImpl implements QuestionService {
         }
 
         tagMapMapper.insertBatch(list);
+
+        return quesId;
     }
 
     @Override
     public void update(QuestionParamVo questionParamVo) {
 
     }
+
+
 
     @Override
     public PageBean<QuestionVo> getByTagId(int pageNum, int pageSize, int tagId) {

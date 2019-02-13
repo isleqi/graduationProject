@@ -5,12 +5,14 @@ import com.github.pagehelper.PageInfo;
 import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.component.common.RedisKeyPrefix;
 import com.isleqi.graduationproject.component.common.domain.Response;
+import com.isleqi.graduationproject.dao.mappers.TagMapMapper;
 import com.isleqi.graduationproject.dao.mappers.TagMapper;
 import com.isleqi.graduationproject.domain.Question;
 import com.isleqi.graduationproject.domain.Tag;
 import com.isleqi.graduationproject.domain.User;
 import com.isleqi.graduationproject.domain.vo.QuestionParamVo;
 import com.isleqi.graduationproject.domain.vo.QuestionVo;
+import com.isleqi.graduationproject.domain.vo.TagMapVo;
 import com.isleqi.graduationproject.service.QuestionService;
 import com.isleqi.graduationproject.service.UserOperationService;
 import com.isleqi.graduationproject.util.RedisUtil;
@@ -19,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -29,6 +32,8 @@ public class QuestionController {
 
     @Autowired
     TagMapper tagMapper;
+    @Autowired
+    TagMapMapper tagMapMapper;
     @Autowired
     RedisUtil redisUtil;
     @Autowired
@@ -49,9 +54,23 @@ public class QuestionController {
 
 
             questionParamVo.setQuesUserId(user.getId());
-            questionService.insert(questionParamVo);
+           int quesId= questionService.insert(questionParamVo);
 
-            return  Response.successResponse();
+      //     Question question = questionService.getById(quesId);
+
+            List<TagMapVo> tagMapVos = tagMapMapper.selectAllTagByQuesId(quesId);
+            List<Tag> tags=new ArrayList<>();
+            for(TagMapVo vo:tagMapVos){
+                tags.add(vo.getTag());
+            }
+
+           QuestionVo questionVo=new QuestionVo();
+           questionVo.setId(quesId);
+           questionVo.setQuesTitle(questionParamVo.getQuesTitle());
+           questionVo.setQuesDes(questionParamVo.getQuesDes());
+           questionVo.setTagList(tags);
+
+            return  Response.successResponseWithData(questionVo);
         }catch (Exception e){
             e.printStackTrace();
             return Response.errorResponse("添加问题失败");
@@ -108,7 +127,7 @@ public class QuestionController {
             tag.setTagName(tagName);
             tagMapper.insertSelective(tag);
             JSONObject data=new JSONObject();
-            data.put("tagId",tag.getId());
+            data.put("id",tag.getId());
             data.put("tagName",tagName);
             return  Response.successResponseWithData(data);
         }catch (Exception e){
