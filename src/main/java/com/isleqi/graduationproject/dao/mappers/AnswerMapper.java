@@ -1,8 +1,11 @@
 package com.isleqi.graduationproject.dao.mappers;
 
 import com.isleqi.graduationproject.domain.Answer;
+import com.isleqi.graduationproject.domain.vo.AnswerVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @Mapper
@@ -13,9 +16,11 @@ public interface AnswerMapper {
 
     int insertSelective(Answer record);
 
-    Answer selectByPrimaryKey(Integer ansId);
+    AnswerVo selectByPrimaryKey(Integer ansId);
 
-    Answer selectByQuesId(Integer quesId);
+    AnswerVo selectByQuesId(Integer quesId);
+
+    List<AnswerVo> selectListByQuesId(Integer quesId);
 
     int updateByPrimaryKeySelective(Answer record);
 

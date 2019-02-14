@@ -45,7 +45,7 @@ public class QuestionController {
     @RequestMapping(value = "add",method = RequestMethod.POST)
     public Response addQuestion(@RequestHeader("token") String token,@RequestBody QuestionParamVo questionParamVo){
         try {
-            logger.info(token.toString());
+
             User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
 
             if(user==null){
@@ -77,16 +77,62 @@ public class QuestionController {
         }
     }
 
-    @RequestMapping(value = "follow",method = RequestMethod.GET)
-    public Response getTag(@RequestParam("userId") Integer userId,@RequestParam("quesId") Integer quesId){
+    @RequestMapping(value = "getFollowQuesList",method = RequestMethod.GET)
+    public Response getFollowQues(@RequestHeader("token") String token,@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){
         try{
+
+            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
+            if(user==null){
+                return Response.errorResponse("token失效，请重新登录");
+            }
+            int userId=user.getId();
+            PageBean<QuestionVo> data  = questionService.getFollowQuestionList(userId,pageNum,pageSize);
+            return Response.successResponseWithData(data);
+        }
+        catch (Exception e){
+            logger.info(e.getMessage());
+            e.printStackTrace();
+            return Response.errorResponse("获取关注问题列表失败");
+        }
+
+    }
+
+    @RequestMapping(value = "follow",method = RequestMethod.GET)
+    public Response followQues(@RequestHeader("token") String token,@RequestParam("quesId") Integer quesId){
+        try{
+
+            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
+            if(user==null){
+                return Response.errorResponse("token失效，请重新登录");
+            }
+             int userId=user.getId();
             userOperationService.followQues(quesId,userId);
+
             return Response.successResponse();
         }
        catch (Exception e){
             logger.info(e.getMessage());
+            e.printStackTrace();
             return Response.errorResponse("关注问题失败");
        }
+
+    }
+
+    @RequestMapping(value = "hasfollow",method = RequestMethod.GET)
+    public Response hasfollow(@RequestHeader("token") String token,@RequestParam("quesId") Integer quesId){
+        try{
+            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
+            if(user==null){
+                return Response.errorResponse("token失效，请重新登录");
+            }
+            int userId=user.getId();
+          boolean data =  userOperationService.hasFollowQues(quesId,userId);
+            return Response.successResponseWithData(data);
+        }
+        catch (Exception e){
+            logger.info(e.getMessage());
+            return Response.errorResponse("获取是否关注问题失败");
+        }
 
     }
 
@@ -115,7 +161,7 @@ public class QuestionController {
     }
 
     @RequestMapping(value = "getByStr",method = RequestMethod.GET)
-    public Response getByStr(@RequestParam Question question){
+    public Response getByStr(@RequestParam String str){
 
         return null;
     }

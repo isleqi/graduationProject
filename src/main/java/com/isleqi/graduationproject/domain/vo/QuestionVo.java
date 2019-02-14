@@ -15,9 +15,13 @@ public class QuestionVo implements Serializable {
 
     private String quesDes;
 
-    private Answer answer;
+    private Integer followNum;
+
+    private AnswerVo answerVo;
 
     private List<Tag> tagList;
+
+    private  Boolean follow;
 
 
 

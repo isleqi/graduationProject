@@ -24,13 +24,27 @@
       <arg column="ans_content" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
     </constructor>
   </resultMap>
+
+  <resultMap id="ResultMapWithUser" type="com.isleqi.graduationproject.domain.vo.AnswerVo" >
+
+    <id column="ans_id" property="ansId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="like_num" property="likeNum" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="comment_num" property="commentNum" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    <result column="edit_time" property="editTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    <result column="ans_content" property="ansContent" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
+    <association property="user" column="user_id" select="com.isleqi.graduationproject.dao.mappers.UserMapper.selectByPrimaryKey" />
+  </resultMap>
+
+
   <sql id="Base_Column_List" >
     ans_id, ques_id, user_id, like_num, comment_num, creat_time, edit_time
   </sql>
   <sql id="Blob_Column_List" >
     ans_content
   </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithUser" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     ,
@@ -38,13 +52,22 @@
     from answer
     where ans_id = #{ansId,jdbcType=INTEGER}
   </select>
-  <select id="selectByQuesId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+  <select id="selectByQuesId" resultMap="ResultMapWithUser" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
     from answer
-    where ques_id = #{quesId,jdbcType=INTEGER} limit 1
+    where ques_id = #{quesId,jdbcType=INTEGER} order by like_num desc limit 1
+  </select>
+
+  <select id="selectListByQuesId" resultMap="ResultMapWithUser" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from answer
+    where ques_id = #{quesId,jdbcType=INTEGER}
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
@@ -56,8 +79,8 @@
       like_num, comment_num, creat_time, 
       edit_time, ans_content)
     values (#{ansId,jdbcType=INTEGER}, #{quesId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
-      #{likeNum,jdbcType=INTEGER}, #{commentNum,jdbcType=INTEGER}, #{creatTime,jdbcType=TIMESTAMP}, 
-      #{editTime,jdbcType=TIMESTAMP}, #{ansContent,jdbcType=LONGVARCHAR})
+      #{likeNum,jdbcType=INTEGER}, #{commentNum,jdbcType=INTEGER}, now(),
+      now(), #{ansContent,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.Answer" >
     insert into answer
@@ -77,12 +100,10 @@
       <if test="commentNum != null" >
         comment_num,
       </if>
-      <if test="creatTime != null" >
+
         creat_time,
-      </if>
-      <if test="editTime != null" >
-        edit_time,
-      </if>
+
+
       <if test="ansContent != null" >
         ans_content,
       </if>
@@ -103,12 +124,10 @@
       <if test="commentNum != null" >
         #{commentNum,jdbcType=INTEGER},
       </if>
-      <if test="creatTime != null" >
-        #{creatTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="editTime != null" >
-        #{editTime,jdbcType=TIMESTAMP},
-      </if>
+
+       now(),
+
+
       <if test="ansContent != null" >
         #{ansContent,jdbcType=LONGVARCHAR},
       </if>

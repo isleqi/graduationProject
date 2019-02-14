@@ -14,6 +14,8 @@ public interface QuestionService {
 
     void update(QuestionParamVo question);
 
+
+
    // Question getById(int id);
 
     PageBean<QuestionVo> getByTagId(int pageNum,int pageSize,int tagId);
@@ -21,6 +23,8 @@ public interface QuestionService {
     PageBean<QuestionVo> getBySearch(int pageNum,int pageSize,String str);
 
     PageBean<QuestionVo> getQuestionList(int pageNum, int pageSize);
+
+    PageBean<QuestionVo> getFollowQuestionList(int userId,int pageNum, int pageSize);
 
 
 

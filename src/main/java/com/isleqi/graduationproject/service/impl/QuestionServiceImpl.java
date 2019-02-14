@@ -4,10 +4,12 @@ import com.github.pagehelper.PageHelper;
 import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.dao.mappers.QuestionMapper;
 import com.isleqi.graduationproject.dao.mappers.TagMapMapper;
+import com.isleqi.graduationproject.dao.mappers.UserFollowQuesMapper;
 import com.isleqi.graduationproject.domain.Answer;
 import com.isleqi.graduationproject.domain.Question;
 import com.isleqi.graduationproject.domain.Tag;
 import com.isleqi.graduationproject.domain.TagMap;
+import com.isleqi.graduationproject.domain.vo.AnswerVo;
 import com.isleqi.graduationproject.domain.vo.QuestionParamVo;
 import com.isleqi.graduationproject.domain.vo.QuestionVo;
 import com.isleqi.graduationproject.domain.vo.TagMapVo;
@@ -31,6 +33,8 @@ public class QuestionServiceImpl implements QuestionService {
     QuestionMapper questionMapper;
     @Autowired
     TagMapMapper tagMapMapper;
+    @Autowired
+    UserFollowQuesMapper userFollowQuesMapper;
     @Autowired
     AnswerService answerService;
 
@@ -76,8 +80,8 @@ public class QuestionServiceImpl implements QuestionService {
         try {
             list = (ArrayList<QuestionVo>) questionMapper.selectByTagId(tagId);
             for (QuestionVo item:list) {
-                Answer ans=answerService.getByQuesId(item.getId());
-                item.setAnswer(ans);
+                AnswerVo ans=answerService.getByQuesId(item.getId());
+                item.setAnswerVo(ans);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -109,8 +113,8 @@ public class QuestionServiceImpl implements QuestionService {
                     tags.add(vo.getTag());
                 }
                 item.setTagList(tags);
-
             }
+
 
         } catch (Exception e){
             e.printStackTrace();
@@ -121,6 +125,31 @@ public class QuestionServiceImpl implements QuestionService {
 
         return info;
 
+    }
+
+    @Override
+    public PageBean<QuestionVo> getFollowQuestionList(int userId,int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<QuestionVo> list=null;
+        try {
+          list =  questionMapper.selectFollowQuesWithAns(userId);
+            for (QuestionVo item:list) {
+                logger.info(item.getId().toString());
+                List<TagMapVo> tagMapVos=tagMapMapper.selectAllTagByQuesId(item.getId());
+                List<Tag> tags=new ArrayList<>();
+                for(TagMapVo vo:tagMapVos){
+                    tags.add(vo.getTag());
+                }
+                item.setTagList(tags);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            PageHelper.clearPage();
+        }
+        PageBean<QuestionVo> info = new PageBean<>(list);
+
+        return info;
     }
 
 

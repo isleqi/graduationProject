@@ -3,6 +3,7 @@ package com.isleqi.graduationproject.service.impl;
 import com.isleqi.graduationproject.dao.mappers.AnswerMapper;
 import com.isleqi.graduationproject.domain.Answer;
 import com.isleqi.graduationproject.domain.User;
+import com.isleqi.graduationproject.domain.vo.AnswerVo;
 import com.isleqi.graduationproject.service.AnswerService;
 import com.isleqi.graduationproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +21,17 @@ public class AnswerServiceImpl implements AnswerService {
     UserService userService;
 
     @Override
-    public Answer getByQuesId(Integer quesId) {
+    public AnswerVo getByQuesId(Integer quesId) {
       return  answerMapper.selectByQuesId(quesId);
     }
 
     @Override
-    public List<Answer> getListByQuesId(Integer quesId) {
-        return null;
+    public List<AnswerVo> getListByQuesId(Integer quesId) {
+
+        return answerMapper.selectListByQuesId(quesId);
     }
+
+
 
     @Override
     public int addAnswer(Answer answer) {

@@ -18,13 +18,19 @@ public interface QuestionMapper {
 
     Question selectByPrimaryKey(Integer id);
 
+    Question selectBystr(String str);
+
     List<QuestionVo> selectByTagId(Integer tagId);
 
     List<QuestionVo> selectQuesWithAns();
+
+    List<QuestionVo> selectFollowQuesWithAns(Integer userId);
 
     int updateByPrimaryKeySelective(Question record);
 
     int updateByPrimaryKeyWithBLOBs(Question record);
 
     int updateByPrimaryKey(Question record);
+
+    int updateFollowNum(Integer id);
 }
