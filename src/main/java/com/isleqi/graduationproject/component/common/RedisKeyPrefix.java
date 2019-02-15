@@ -26,4 +26,8 @@ public class RedisKeyPrefix {
 
 	public  static  final String USER_INFO="user_info:";
 
+	public  static  final String GET_FOLLOWIDS="get_followIds:";
+
+
+
 }

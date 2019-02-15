@@ -65,7 +65,7 @@
             <property name="enableSubPackages" value="false"/>
         </javaClientGenerator>
 
-        <table tableName="user_follow_ques" domainObjectName="UserFollowQues"
+        <table tableName="user_like_ans" domainObjectName="UserLikeAns"
                enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false"/>

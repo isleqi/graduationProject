@@ -37,6 +37,20 @@
     <association property="user" column="user_id" select="com.isleqi.graduationproject.dao.mappers.UserMapper.selectByPrimaryKey" />
   </resultMap>
 
+  <resultMap id="ResultMapWithUserAndQues" type="com.isleqi.graduationproject.domain.vo.AnswerVo" >
+
+    <id column="ans_id" property="ansId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="ques_id" property="quesId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="like_num" property="likeNum" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="comment_num" property="commentNum" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    <result column="edit_time" property="editTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    <result column="ans_content" property="ansContent" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
+    <association property="user" column="user_id" select="com.isleqi.graduationproject.dao.mappers.UserMapper.selectByPrimaryKey" />
+    <association property="ques" column="ques_id" select="com.isleqi.graduationproject.dao.mappers.QuestionMapper.selectByPrimaryKey" />
+  </resultMap>
+
 
   <sql id="Base_Column_List" >
     ans_id, ques_id, user_id, like_num, comment_num, creat_time, edit_time
@@ -70,6 +84,22 @@
     where ques_id = #{quesId,jdbcType=INTEGER}
   </select>
 
+  <select id="selectListByUserId" resultMap="ResultMapWithUser" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from answer
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectFollowList" resultMap="ResultMapWithUserAndQues" parameterType="java.lang.Integer" >
+    select
+    a.ans_id, ques_id, a.user_id, like_num, comment_num, creat_time, edit_time,ans_content
+    from answer as a,user_follow_ans as u
+    where u.user_id = #{userId,jdbcType=INTEGER} and u.answer_id=a.ans_id
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from answer
     where ans_id = #{ansId,jdbcType=INTEGER}
@@ -82,7 +112,7 @@
       #{likeNum,jdbcType=INTEGER}, #{commentNum,jdbcType=INTEGER}, now(),
       now(), #{ansContent,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.Answer" >
+  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.Answer" useGeneratedKeys="true" keyProperty="ansId">
     insert into answer
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="ansId != null" >

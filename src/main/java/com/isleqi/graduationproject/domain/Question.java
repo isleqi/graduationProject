@@ -23,6 +23,19 @@ public class Question {
 
     private Date editTime;
 
+    public Question(Integer id,String  quesTitle,String quesDes, Integer quesUserId, Integer quesdUserId){
+        this.id=id;
+        this.quesTitle=quesTitle;
+        this.quesDes=quesDes;
+        this.quesUserId=quesUserId;
+        this.quesdUserId=quesdUserId;
+
+    }
+
+    public Question(){
+        super();
+    }
+
 
 
 }

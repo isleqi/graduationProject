@@ -1,5 +1,6 @@
 package com.isleqi.graduationproject.domain.vo;
 
+import com.isleqi.graduationproject.domain.Question;
 import com.isleqi.graduationproject.domain.User;
 import lombok.Data;
 
@@ -24,5 +25,7 @@ public class AnswerVo {
     private String ansContent;
 
     private User user;
+
+    private Question ques;
 
 }

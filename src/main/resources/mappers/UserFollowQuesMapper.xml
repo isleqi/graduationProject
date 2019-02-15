@@ -27,6 +27,11 @@
     delete from user_follow_ques
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
+  <delete id="deleteByData" parameterType="java.lang.Integer" >
+    delete from user_follow_ques
+    where ques_id = #{quesId,jdbcType=INTEGER} and user_id = #{userId,jdbcType=INTEGER}
+  </delete>
   <insert id="insert" parameterType="com.isleqi.graduationproject.domain.UserFollowQues" >
     insert into user_follow_ques (id, user_id, ques_id
       )

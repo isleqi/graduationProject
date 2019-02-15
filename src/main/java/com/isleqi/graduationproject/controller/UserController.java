@@ -8,7 +8,10 @@ import com.isleqi.graduationproject.component.common.domain.Response;
 import com.isleqi.graduationproject.component.common.domain.Sms;
 import com.isleqi.graduationproject.domain.User;
 import com.isleqi.graduationproject.domain.UserAuth;
+import com.isleqi.graduationproject.domain.vo.AnswerVo;
 import com.isleqi.graduationproject.domain.vo.UserInfoVo;
+import com.isleqi.graduationproject.service.AnswerService;
+import com.isleqi.graduationproject.service.UserOperationService;
 import com.isleqi.graduationproject.service.UserService;
 import com.isleqi.graduationproject.util.FileUtil;
 import com.isleqi.graduationproject.util.JWTUtil;
@@ -41,6 +44,10 @@ public class UserController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    AnswerService answerService;
+    @Autowired
+    UserOperationService userOperationService;
 
     @Autowired
     @Lazy
@@ -106,7 +113,21 @@ public class UserController {
             return Response.successResponseWithData(msg);
         } else {
             redisUtil.expire(RedisKeyPrefix.USER_TOKEN + token, Constant.JWT_TTL);
-            User userInfoVo = userService.findByUserId(data.getId());
+            int userId=data.getId();
+            User user = userService.findByUserId(userId);
+            UserInfoVo userInfoVo=new UserInfoVo();
+
+            List<Integer> followIds=userService.getFollowIds(userId);
+            List<Integer> fanIds=userService.getFanIds(userId);
+
+            //将关注列表放进redis中
+            redisUtil.set(RedisKeyPrefix.GET_FOLLOWIDS + token,followIds);
+
+            int followsNum=followIds.size();
+            int fansNum=fanIds.size();
+            userInfoVo.setFansNum(fansNum);
+            userInfoVo.setFollowsNum(followsNum);
+
             return Response.successResponseWithData(userInfoVo);
         }
     }
@@ -115,6 +136,86 @@ public class UserController {
     public Response updateUserInfo(@RequestParam String userName, @RequestParam String userDes, @RequestParam String userIconUrl) {
         return null;
     }
+
+    @RequestMapping(value = "follow",method = RequestMethod.GET)
+    public Response followUser(@RequestHeader("token") String token,@RequestParam("useredId") Integer useredId){
+        try{
+
+            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
+            if(user==null){
+                return Response.errorResponse("token失效，请重新登录");
+            }
+            int userId=user.getId();
+
+            userOperationService.followUser(userId,useredId);
+            return Response.successResponse();
+        }
+        catch (Exception e){
+            logger.info(e.getMessage());
+            e.printStackTrace();
+            return Response.errorResponse("关注用户失败");
+        }
+
+    }
+
+    @RequestMapping(value = "hasfollow",method = RequestMethod.GET)
+    public Response hasfollow(@RequestHeader("token") String token,@RequestParam("useredId") Integer useredId){
+        try{
+            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
+            if(user==null){
+                return Response.errorResponse("token失效，请重新登录");
+            }
+            int userId=user.getId();
+            boolean data =  userOperationService.hasFollowUser(userId,useredId);
+            return Response.successResponseWithData(data);
+        }
+        catch (Exception e){
+            logger.info(e.getMessage());
+            return Response.errorResponse("获取是否关注问题失败");
+        }
+
+    }
+
+    @RequestMapping(value = "cancelFollow",method = RequestMethod.GET)
+    public Response cancelFollow(@RequestHeader("token") String token,@RequestParam("useredId") Integer useredId){
+        try{
+
+            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
+            if(user==null){
+                return Response.errorResponse("token失效，请重新登录");
+            }
+            int userId=user.getId();
+
+            userOperationService.cancelFollowUser(userId,useredId);
+            return Response.successResponse();
+        }
+        catch (Exception e){
+            logger.info(e.getMessage());
+            e.printStackTrace();
+            return Response.errorResponse("取消关注用户失败");
+        }
+
+    }
+
+    @RequestMapping(value = "getFollowAnswerList", method = RequestMethod.GET)
+    public Response getFollowAnswerList(@RequestHeader("token") String token){
+        try{
+            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
+            if(user==null){
+                return Response.errorResponse("token失效，请重新登录");
+            }
+            int userId=user.getId();
+           List<AnswerVo> data = answerService.getFollowList(userId);
+
+           return Response.successResponseWithData(data);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.info("获取收藏列表失败");
+            return  Response.errorResponse("获取收藏列表失败");
+        }
+    }
+
 
 
 }

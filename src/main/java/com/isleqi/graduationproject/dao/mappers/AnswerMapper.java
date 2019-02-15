@@ -20,7 +20,11 @@ public interface AnswerMapper {
 
     AnswerVo selectByQuesId(Integer quesId);
 
+    AnswerVo selectListByUserId(Integer userId);
+
     List<AnswerVo> selectListByQuesId(Integer quesId);
+
+    List<AnswerVo> selectFollowList(Integer userId);
 
     int updateByPrimaryKeySelective(Answer record);
 

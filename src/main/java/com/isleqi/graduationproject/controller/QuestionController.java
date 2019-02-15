@@ -118,6 +118,27 @@ public class QuestionController {
 
     }
 
+    @RequestMapping(value = "cancelFollow",method = RequestMethod.GET)
+    public Response cancelFollow(@RequestHeader("token") String token,@RequestParam("quesId") Integer quesId){
+        try{
+
+            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
+            if(user==null){
+                return Response.errorResponse("token失效，请重新登录");
+            }
+            int userId=user.getId();
+            userOperationService.cancelFollowQues(quesId,userId);
+
+            return Response.successResponse();
+        }
+        catch (Exception e){
+            logger.info(e.getMessage());
+            e.printStackTrace();
+            return Response.errorResponse("取消关注问题失败");
+        }
+
+    }
+
     @RequestMapping(value = "hasfollow",method = RequestMethod.GET)
     public Response hasfollow(@RequestHeader("token") String token,@RequestParam("quesId") Integer quesId){
         try{

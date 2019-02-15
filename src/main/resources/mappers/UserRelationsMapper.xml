@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.isleqi.graduationproject.dao.mappers.UserRelationsMapper">
+    <resultMap id="BaseResultMap" type="com.isleqi.graduationproject.domain.UserRelationsKey">
+        <constructor>
+            <idArg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <idArg column="follow_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        </constructor>
+    </resultMap>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" >
+    select
+   user_id,follow_id
+    from user_relations
+    where user_id = #{userId,jdbcType=INTEGER} and follow_id = #{useredId,jdbcType=INTEGER}
+  </select>
+
+    <select id="getFollowIds"  parameterType="java.lang.Integer">
+    select
+      follow_id
+    from user_relations
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+
+    <select id="getFanIds"  parameterType="java.lang.Integer">
+    select
+      follow_id
+    from user_relations
+    where follow_id = #{userId,jdbcType=INTEGER}
+  </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="com.isleqi.graduationproject.domain.UserRelationsKey">
+    delete from user_relations
+    where user_id = #{userId,jdbcType=INTEGER}
+      and follow_id = #{followId,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.isleqi.graduationproject.domain.UserRelationsKey">
+    insert into user_relations (user_id, follow_id)
+    values (#{userId,jdbcType=INTEGER}, #{followId,jdbcType=INTEGER})
+  </insert>
+    <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.UserRelationsKey">
+        insert into user_relations
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="followId != null">
+                follow_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="followId != null">
+                #{followId,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+</mapper>

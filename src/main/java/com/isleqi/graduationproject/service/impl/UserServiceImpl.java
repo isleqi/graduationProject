@@ -1,10 +1,13 @@
 package com.isleqi.graduationproject.service.impl;
 
+import java.util.List;
 import java.util.Map;
 
 import com.isleqi.graduationproject.dao.mappers.UserAuthMapper;
 import com.isleqi.graduationproject.dao.mappers.UserMapper;
+import com.isleqi.graduationproject.dao.mappers.UserRelationsMapper;
 import com.isleqi.graduationproject.domain.UserAuth;
+import com.isleqi.graduationproject.domain.UserRelationsKey;
 import com.isleqi.graduationproject.domain.vo.UserInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,6 +27,8 @@ public class UserServiceImpl  implements UserService{
 	private UserMapper userMapper;
 	@Autowired
 	private UserAuthMapper userAuthMapper;
+	@Autowired
+	private UserRelationsMapper userRelationsMapper;
 
 
 	@Override
@@ -73,6 +78,16 @@ public class UserServiceImpl  implements UserService{
 		result=userAuthMapper.insertSelective(userAuth);
 		return userId;
 
+	}
+
+	@Override
+	public List<Integer> getFollowIds(Integer userId) {
+		return userRelationsMapper.getFollowIds(userId);
+	}
+
+	@Override
+	public List<Integer> getFanIds(Integer userId) {
+		return userRelationsMapper.getFanIds(userId);
 	}
 
 

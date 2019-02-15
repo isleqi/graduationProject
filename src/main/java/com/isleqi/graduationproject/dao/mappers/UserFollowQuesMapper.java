@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 public interface UserFollowQuesMapper {
     int deleteByPrimaryKey(Integer id);
 
+    int deleteByData(@Param("quesId") Integer quesId,@Param("userId") Integer userId);
+
     int insert(UserFollowQues record);
 
     int insertSelective(UserFollowQues record);
