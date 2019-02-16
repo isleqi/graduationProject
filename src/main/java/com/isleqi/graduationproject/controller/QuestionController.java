@@ -1,10 +1,12 @@
 package com.isleqi.graduationproject.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.component.common.RedisKeyPrefix;
 import com.isleqi.graduationproject.component.common.domain.Response;
+import com.isleqi.graduationproject.dao.mappers.QuestionMapper;
 import com.isleqi.graduationproject.dao.mappers.TagMapMapper;
 import com.isleqi.graduationproject.dao.mappers.TagMapper;
 import com.isleqi.graduationproject.domain.Question;
@@ -34,6 +36,8 @@ public class QuestionController {
     TagMapper tagMapper;
     @Autowired
     TagMapMapper tagMapMapper;
+    @Autowired
+    QuestionMapper questionMapper;
     @Autowired
     RedisUtil redisUtil;
     @Autowired
@@ -147,7 +151,11 @@ public class QuestionController {
                 return Response.errorResponse("token失效，请重新登录");
             }
             int userId=user.getId();
-          boolean data =  userOperationService.hasFollowQues(quesId,userId);
+          boolean flag =  userOperationService.hasFollowQues(quesId,userId);
+          int num = questionMapper.selectByPrimaryKey(quesId).getFollowNum();
+            JSONObject data =new JSONObject();
+            data.put("hasFollow",flag);
+            data.put("followNum",num);
             return Response.successResponseWithData(data);
         }
         catch (Exception e){

@@ -105,7 +105,7 @@ public class UserController {
         logger.info(token);
         // String token_=JSONObject.parseObject(token).getString("token");
         User data = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-        System.out.println((data + "!!!!!!"));
+        System.out.println((data.getId() + "!!!!!!"));
         if (data == null || "".equals(data)) {
             JSONObject msg = new JSONObject();
             msg.put("code", 403);
@@ -116,7 +116,7 @@ public class UserController {
             int userId=data.getId();
             User user = userService.findByUserId(userId);
             UserInfoVo userInfoVo=new UserInfoVo();
-
+            userInfoVo.setUser(user);
             List<Integer> followIds=userService.getFollowIds(userId);
             List<Integer> fanIds=userService.getFanIds(userId);
 
@@ -171,7 +171,7 @@ public class UserController {
         }
         catch (Exception e){
             logger.info(e.getMessage());
-            return Response.errorResponse("获取是否关注问题失败");
+            return Response.errorResponse("获取是否关注用户失败");
         }
 
     }

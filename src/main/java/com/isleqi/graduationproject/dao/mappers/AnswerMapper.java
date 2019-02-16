@@ -22,6 +22,8 @@ public interface AnswerMapper {
 
     AnswerVo selectListByUserId(Integer userId);
 
+    AnswerVo selectAnswer(Integer ansId);
+
     List<AnswerVo> selectListByQuesId(Integer quesId);
 
     List<AnswerVo> selectFollowList(Integer userId);

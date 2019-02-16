@@ -32,5 +32,7 @@ public interface QuestionMapper {
 
     int updateByPrimaryKey(Question record);
 
-    int updateFollowNum(Integer id);
+    int addFollowNum(Integer id);
+
+    int subFollowNum(Integer id);
 }

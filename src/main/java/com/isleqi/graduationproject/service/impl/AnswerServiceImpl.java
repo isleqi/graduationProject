@@ -23,7 +23,7 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public AnswerVo getByAnsId(Integer ansId) {
-        return answerMapper.selectByPrimaryKey(ansId);
+        return answerMapper.selectAnswer(ansId);
     }
 
     @Override

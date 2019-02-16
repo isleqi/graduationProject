@@ -33,7 +33,7 @@ public class UserOperationServiceImpl implements UserOperationService {
         boolean flag = hasFollowQues(quesId, userId);
         if (!flag) {
             userFollowQuesMapper.insertSelective(userFollowQues);
-            questionMapper.updateFollowNum(quesId);
+            questionMapper.addFollowNum(quesId);
         }
     }
 
@@ -66,6 +66,8 @@ public class UserOperationServiceImpl implements UserOperationService {
         userRelationsKey.setUserId(userId);
         userRelationsKey.setFollowId(useredId);
         userRelationsMapper.deleteByPrimaryKey(userRelationsKey);
+
+
     }
 
     @Override
@@ -82,6 +84,7 @@ public class UserOperationServiceImpl implements UserOperationService {
         userFollowQues.setQuesId(quesId);
         userFollowQues.setUserId(userId);
         userFollowQuesMapper.deleteByData(quesId, userId);
+        questionMapper.subFollowNum(quesId);
     }
 
     @Override

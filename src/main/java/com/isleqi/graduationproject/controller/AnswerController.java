@@ -38,7 +38,9 @@ public class AnswerController {
             }
             answerParamVo.setUserId(user.getId());
             int ansId = answerService.addAnswer(answerParamVo);
-           AnswerVo answerVo=answerService.getByAnsId(ansId);
+
+           AnswerVo answerVo = answerService.getByAnsId(ansId);
+
             return Response.successResponseWithData(answerVo);
 
         } catch (Exception e) {
@@ -72,7 +74,7 @@ public class AnswerController {
         try {
             User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
             if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
+                return Response.errorResponse("hasfollow_token失效，请重新登录");
             }
             int userId = user.getId();
             boolean data = userOperationService.hasFollowAns(ansId, userId);
@@ -124,7 +126,7 @@ public class AnswerController {
         try {
             User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
             if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
+                return Response.errorResponse("setLike_token失效，请重新登录");
             }
             int userId = user.getId();
             userOperationService.setLike(ansId, userId);
@@ -141,7 +143,7 @@ public class AnswerController {
         try {
             User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
             if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
+                return Response.errorResponse("hasLike_token失效，请重新登录");
             }
             int userId = user.getId();
            Boolean data = userOperationService.hasLike(ansId, userId);
