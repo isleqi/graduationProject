@@ -2,6 +2,7 @@ package com.isleqi.graduationproject.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.isleqi.graduationproject.component.common.Constant;
+import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.component.common.RedisKeyPrefix;
 import com.isleqi.graduationproject.component.common.ResponseEnmus;
 import com.isleqi.graduationproject.component.common.domain.Response;
@@ -198,14 +199,14 @@ public class UserController {
     }
 
     @RequestMapping(value = "getFollowAnswerList", method = RequestMethod.GET)
-    public Response getFollowAnswerList(@RequestHeader("token") String token){
+    public Response getFollowAnswerList(@RequestHeader("token") String token,@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){
         try{
             User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
             if(user==null){
                 return Response.errorResponse("token失效，请重新登录");
             }
             int userId=user.getId();
-           List<AnswerVo> data = answerService.getFollowList(userId);
+           PageBean<AnswerVo> data = answerService.getFollowList(pageNum,pageSize,userId);
 
            return Response.successResponseWithData(data);
 

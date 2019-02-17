@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.isleqi.graduationproject.dao.mappers.AnsReplyMapper" >
+  <resultMap id="BaseResultMap" type="com.isleqi.graduationproject.domain.AnsReply" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="ans_comment_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="reply_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="reply_user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="replyed_user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="reply_comtent" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="like_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="creat_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <resultMap id="ResultMapWithUserAndReply" type="com.isleqi.graduationproject.domain.vo.AnsReplyVo" >
+      <id column="id" property="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="ans_comment_id" property="ansCommentId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="reply_id" property="replyId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="reply_user_id" property="replyUserId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="replyed_user_id" property="replyedUserId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="reply_comtent" property="replyComtent" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="like_num" property="likeNum" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    <association property="replyUser" column="reply_user_id" select="com.isleqi.graduationproject.dao.mappers.UserMapper.selectByPrimaryKey" />
+    <association property="replyedUser" column="replyed_user_id" select="com.isleqi.graduationproject.dao.mappers.UserMapper.selectByPrimaryKey" />
+    <collection  property="replyVoList" ofType="AnsReplyVo" column="id" select="com.isleqi.graduationproject.dao.mappers.AnsReplyMapper.selectByReplyId"/>
+  </resultMap>
+  <resultMap id="ResultMapWithUser" type="com.isleqi.graduationproject.domain.vo.AnsReplyVo" >
+    <id column="id" property="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="ans_comment_id" property="ansCommentId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="reply_id" property="replyId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="reply_user_id" property="replyUserId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="replyed_user_id" property="replyedUserId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="reply_comtent" property="replyComtent" jdbcType="VARCHAR" javaType="java.lang.String" />
+    <result column="like_num" property="likeNum" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    <association property="replyUser" column="reply_user_id" select="com.isleqi.graduationproject.dao.mappers.UserMapper.selectByPrimaryKey" />
+    <association property="replyedUser" column="replyed_user_id" select="com.isleqi.graduationproject.dao.mappers.UserMapper.selectByPrimaryKey" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, ans_comment_id, reply_id, reply_user_id, replyed_user_id, reply_comtent, like_num, 
+    creat_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithUser" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ans_reply
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectListByCommentId" resultMap="ResultMapWithUser" parameterType="java.lang.Integer" >
+    select
+     id, ans_comment_id, reply_id, reply_user_id, replyed_user_id, reply_comtent, like_num,
+    creat_time
+    from ans_reply
+    where ans_comment_id = #{commentId,jdbcType=INTEGER}
+  </select>
+  <select id="selectByReplyId" resultMap="ResultMapWithUser" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from ans_reply
+    where reply_id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ans_reply
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.isleqi.graduationproject.domain.AnsReply" >
+    insert into ans_reply (id, ans_comment_id, reply_id, 
+      reply_user_id, replyed_user_id, reply_comtent, 
+      like_num, creat_time)
+    values (#{id,jdbcType=INTEGER}, #{ansCommentId,jdbcType=INTEGER}, #{replyId,jdbcType=INTEGER}, 
+      #{replyUserId,jdbcType=INTEGER}, #{replyedUserId,jdbcType=INTEGER}, #{replyComtent,jdbcType=VARCHAR}, 
+      #{likeNum,jdbcType=INTEGER}, #{creatTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.AnsReply" >
+    insert into ans_reply
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="ansCommentId != null" >
+        ans_comment_id,
+      </if>
+      <if test="replyId != null" >
+        reply_id,
+      </if>
+      <if test="replyUserId != null" >
+        reply_user_id,
+      </if>
+      <if test="replyedUserId != null" >
+        replyed_user_id,
+      </if>
+      <if test="replyComtent != null" >
+        reply_comtent,
+      </if>
+      <if test="likeNum != null" >
+        like_num,
+      </if>
+      <if test="creatTime != null" >
+        creat_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="ansCommentId != null" >
+        #{ansCommentId,jdbcType=INTEGER},
+      </if>
+      <if test="replyId != null" >
+        #{replyId,jdbcType=INTEGER},
+      </if>
+      <if test="replyUserId != null" >
+        #{replyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="replyedUserId != null" >
+        #{replyedUserId,jdbcType=INTEGER},
+      </if>
+      <if test="replyComtent != null" >
+        #{replyComtent,jdbcType=VARCHAR},
+      </if>
+      <if test="likeNum != null" >
+        #{likeNum,jdbcType=INTEGER},
+      </if>
+      <if test="creatTime != null" >
+        #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.isleqi.graduationproject.domain.AnsReply" >
+    update ans_reply
+    <set >
+      <if test="ansCommentId != null" >
+        ans_comment_id = #{ansCommentId,jdbcType=INTEGER},
+      </if>
+      <if test="replyId != null" >
+        reply_id = #{replyId,jdbcType=INTEGER},
+      </if>
+      <if test="replyUserId != null" >
+        reply_user_id = #{replyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="replyedUserId != null" >
+        replyed_user_id = #{replyedUserId,jdbcType=INTEGER},
+      </if>
+      <if test="replyComtent != null" >
+        reply_comtent = #{replyComtent,jdbcType=VARCHAR},
+      </if>
+      <if test="likeNum != null" >
+        like_num = #{likeNum,jdbcType=INTEGER},
+      </if>
+      <if test="creatTime != null" >
+        creat_time = #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.isleqi.graduationproject.domain.AnsReply" >
+    update ans_reply
+    set ans_comment_id = #{ansCommentId,jdbcType=INTEGER},
+      reply_id = #{replyId,jdbcType=INTEGER},
+      reply_user_id = #{replyUserId,jdbcType=INTEGER},
+      replyed_user_id = #{replyedUserId,jdbcType=INTEGER},
+      reply_comtent = #{replyComtent,jdbcType=VARCHAR},
+      like_num = #{likeNum,jdbcType=INTEGER},
+      creat_time = #{creatTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

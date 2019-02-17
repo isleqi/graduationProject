@@ -1,8 +1,12 @@
 package com.isleqi.graduationproject.service;
 
+import com.isleqi.graduationproject.component.common.PageBean;
+import com.isleqi.graduationproject.domain.AnsComment;
 import com.isleqi.graduationproject.domain.Answer;
+import com.isleqi.graduationproject.domain.vo.AnsCommentVo;
 import com.isleqi.graduationproject.domain.vo.AnswerParamVo;
 import com.isleqi.graduationproject.domain.vo.AnswerVo;
+import com.isleqi.graduationproject.domain.vo.QuestionVo;
 
 import java.util.List;
 
@@ -12,14 +16,16 @@ public interface AnswerService {
 
     AnswerVo getByQuesId(Integer quesId);
 
-    List<AnswerVo> getListByQuesId(Integer quesId);
+    PageBean<AnswerVo> getListByQuesId(int pageNum,int pageSize,Integer quesId);
 
-    List<AnswerVo> getListByUserId(Integer userId);
+    PageBean<AnswerVo> getListByUserId(int pageNum,int pageSize,Integer userId);
 
-    List<AnswerVo> getFollowList(Integer userId);
+    PageBean<AnswerVo> getFollowList(int pageNum,int pageSize,Integer userId);
 
     int addAnswer(AnswerParamVo answerParamVo);
 
     void updateAnswer(Answer answer);
+
+
 
 }

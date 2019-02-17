@@ -1,12 +1,15 @@
 package com.isleqi.graduationproject.controller;
 
+import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.component.common.RedisKeyPrefix;
 import com.isleqi.graduationproject.component.common.domain.Response;
+import com.isleqi.graduationproject.domain.AnsComment;
+import com.isleqi.graduationproject.domain.AnsReply;
 import com.isleqi.graduationproject.domain.Answer;
 import com.isleqi.graduationproject.domain.User;
-import com.isleqi.graduationproject.domain.vo.AnswerParamVo;
-import com.isleqi.graduationproject.domain.vo.AnswerVo;
+import com.isleqi.graduationproject.domain.vo.*;
 import com.isleqi.graduationproject.service.AnswerService;
+import com.isleqi.graduationproject.service.CommentAndReplyService;
 import com.isleqi.graduationproject.service.UserOperationService;
 import com.isleqi.graduationproject.util.RedisUtil;
 import org.slf4j.Logger;
@@ -27,6 +30,8 @@ public class AnswerController {
     @Autowired
     UserOperationService userOperationService;
     @Autowired
+    CommentAndReplyService commentAndReplyService;
+    @Autowired
     RedisUtil redisUtil;
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
@@ -39,7 +44,7 @@ public class AnswerController {
             answerParamVo.setUserId(user.getId());
             int ansId = answerService.addAnswer(answerParamVo);
 
-           AnswerVo answerVo = answerService.getByAnsId(ansId);
+            AnswerVo answerVo = answerService.getByAnsId(ansId);
 
             return Response.successResponseWithData(answerVo);
 
@@ -107,10 +112,10 @@ public class AnswerController {
 
 
     @RequestMapping(value = "getAnswerList", method = RequestMethod.GET)
-    public Response getAnswerList(Integer quesId) {
+    public Response getAnswerList(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,Integer quesId) {
         try {
 
-            List<AnswerVo> data = answerService.getListByQuesId(quesId);
+            PageBean<AnswerVo> data = answerService.getListByQuesId(pageNum,pageSize,quesId);
 
             return Response.successResponseWithData(data);
 
@@ -146,7 +151,7 @@ public class AnswerController {
                 return Response.errorResponse("hasLike_token失效，请重新登录");
             }
             int userId = user.getId();
-           Boolean data = userOperationService.hasLike(ansId, userId);
+            Boolean data = userOperationService.hasLike(ansId, userId);
             return Response.successResponseWithData(data);
         } catch (Exception e) {
             e.printStackTrace();
@@ -155,7 +160,80 @@ public class AnswerController {
         }
     }
 
+    @RequestMapping(value = "comment", method = RequestMethod.GET)
+    public Response comment(@RequestHeader("token") String token, String comment, Integer ansId) {
+        try {
+            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+            if (user == null) {
+                return Response.errorResponse("comment_token失效，请重新登录");
+            }
+            int userId = user.getId();
+            AnsComment ansComment = new AnsComment();
+            ansComment.setAnsId(ansId);
+            ansComment.setUserId(userId);
+            ansComment.setCommentContent(comment);
+             commentAndReplyService.addComment(ansComment);
+             Integer commentId=ansComment.getId();
+            AnsCommentVo data = commentAndReplyService.getCommentById(commentId);
+            return Response.successResponseWithData(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("评论失败");
+            return Response.errorResponse("评论失败");
 
+        }
+    }
+
+    @RequestMapping(value = "comment/reply", method = RequestMethod.GET)
+    public Response reply(@RequestHeader("token") String token, String comtent, Integer commentId, Integer replyedUserId) {
+        try {
+            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+            if (user == null) {
+                return Response.errorResponse("reply_token失效，请重新登录");
+            }
+            int userId = user.getId();
+
+            AnsReply ansReply = new AnsReply();
+            ansReply.setAnsCommentId(commentId);
+            ansReply.setReplyComtent(comtent);
+            ansReply.setReplyedUserId(replyedUserId);
+            ansReply.setReplyUserId(userId);
+            commentAndReplyService.addReply(ansReply);
+            AnsReplyVo data = commentAndReplyService.getReplyById(ansReply.getId());
+            return Response.successResponseWithData(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("回复失败");
+            return Response.errorResponse("回复失败");
+
+        }
+    }
+
+
+    @RequestMapping(value = "getCommentList",method = RequestMethod.GET)
+    public Response getCommentList(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("ansId") Integer ansId) {
+        try {
+            PageBean<AnsCommentVo> data  = commentAndReplyService.getCommentByAnsId(ansId,pageNum,pageSize);
+            return Response.successResponseWithData(data);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.info("获取评论列表失败");
+            return Response.errorResponse("获取评论列表失败");
+        }
+    }
+
+    @RequestMapping(value = "getReplyList",method = RequestMethod.GET)
+    public Response getReplyList(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("commentId") Integer commentId) {
+        try {
+            PageBean<AnsReplyVo> data  = commentAndReplyService.getReplyListByCommnetId(commentId,pageNum,pageSize);
+            return Response.successResponseWithData(data);
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.info("获取回复列表失败");
+            return Response.errorResponse("获取回复列表失败");
+        }
+    }
 
 
 
