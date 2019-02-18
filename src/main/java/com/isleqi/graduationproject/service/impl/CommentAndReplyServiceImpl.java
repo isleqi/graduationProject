@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.dao.mappers.AnsCommentMapper;
 import com.isleqi.graduationproject.dao.mappers.AnsReplyMapper;
+import com.isleqi.graduationproject.dao.mappers.AnswerMapper;
 import com.isleqi.graduationproject.domain.AnsComment;
 import com.isleqi.graduationproject.domain.AnsReply;
 import com.isleqi.graduationproject.domain.vo.AnsCommentVo;
@@ -11,6 +12,7 @@ import com.isleqi.graduationproject.domain.vo.AnsReplyVo;
 import com.isleqi.graduationproject.service.CommentAndReplyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,19 +23,24 @@ public class CommentAndReplyServiceImpl implements CommentAndReplyService {
     AnsCommentMapper ansCommentMapper;
     @Autowired
     AnsReplyMapper ansReplyMapper;
+    @Autowired
+    AnswerMapper answerMapper;
 
 
 
     @Override
+    @Transactional
     public void addComment(AnsComment ansComment) {
         ansCommentMapper.insertSelective(ansComment);
-
+        answerMapper.addCommentNum(ansComment.getAnsId());
     }
 
 
     @Override
+    @Transactional
     public void addReply(AnsReply ansReply) {
         ansReplyMapper.insertSelective(ansReply);
+        ansCommentMapper.addReplyNum(ansReply.getAnsCommentId());
     }
 
     @Override

@@ -17,6 +17,8 @@ public class QuestionVo implements Serializable {
 
     private Integer followNum;
 
+    private Integer answerNum;
+
     private AnswerVo answerVo;
 
     private List<Tag> tagList;

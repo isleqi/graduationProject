@@ -15,13 +15,16 @@ public class AnsComment {
 
     private String commentContent;
 
-    public AnsComment(Integer id, Integer ansId, Integer userId, Integer likeNum, Date creatTime, String commentContent) {
+    private Integer replyNum;
+
+    public AnsComment(Integer id, Integer ansId, Integer userId, Integer likeNum, Date creatTime, String commentContent,Integer replyNum) {
         this.id = id;
         this.ansId = ansId;
         this.userId = userId;
         this.likeNum = likeNum;
         this.creatTime = creatTime;
         this.commentContent = commentContent;
+        this.replyNum=replyNum;
     }
 
     public AnsComment() {

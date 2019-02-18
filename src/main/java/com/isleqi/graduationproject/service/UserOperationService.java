@@ -22,4 +22,6 @@ public interface UserOperationService {
     Boolean hasLike(Integer ansId, Integer userId);
 
     void setLike(Integer ansId,Integer userId);
+
+    void cancelLike(Integer ansId, Integer userId);
 }

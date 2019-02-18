@@ -25,4 +25,6 @@ public interface AnsCommentMapper {
     int updateByPrimaryKeyWithBLOBs(AnsComment record);
 
     int updateByPrimaryKey(AnsComment record);
+
+    void addReplyNum(Integer id);
 }

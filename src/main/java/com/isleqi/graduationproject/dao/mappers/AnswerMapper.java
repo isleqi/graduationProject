@@ -20,7 +20,7 @@ public interface AnswerMapper {
 
     AnswerVo selectByQuesId(Integer quesId);
 
-    AnswerVo selectListByUserId(Integer userId);
+   List<AnswerVo>  selectListByUserId(Integer userId);
 
     AnswerVo selectAnswer(Integer ansId);
 
@@ -33,4 +33,10 @@ public interface AnswerMapper {
     int updateByPrimaryKeyWithBLOBs(Answer record);
 
     int updateByPrimaryKey(Answer record);
+
+    int addLikeNum(Integer id);
+
+    int subLikeNum(Integer id);
+
+    int addCommentNum(Integer id);
 }

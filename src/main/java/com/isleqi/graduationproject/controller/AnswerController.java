@@ -55,6 +55,32 @@ public class AnswerController {
 
     }
 
+    @RequestMapping(value = "deleteAnswer", method = RequestMethod.GET)
+    public Response deleteAnswer(@RequestParam("ansId") Integer ansId,@RequestParam("quesId") Integer quesId) {
+        try {
+            answerService.delAnswer(ansId, quesId);
+            return Response.successResponse();
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+            e.printStackTrace();
+            return Response.errorResponse("删除回答失败");
+        }
+
+    }
+    @RequestMapping(value = "updateAnswer", method = RequestMethod.GET)
+    public Response updateAnswer(@RequestParam("ansId") Integer ansId,@RequestParam("content") String content) {
+        try {
+            answerService.updateAnswer(content,ansId);
+            return Response.successResponse();
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+            e.printStackTrace();
+            return Response.errorResponse("更新回答失败");
+        }
+
+    }
+
+
     @RequestMapping(value = "follow", method = RequestMethod.GET)
     public Response followAns(@RequestHeader("token") String token, @RequestParam("ansId") Integer ansId) {
         try {
@@ -143,6 +169,23 @@ public class AnswerController {
         }
     }
 
+    @RequestMapping(value = "cancelLike", method = RequestMethod.GET)
+    public Response cancelLike(@RequestHeader("token") String token, Integer ansId) {
+        try {
+            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+            if (user == null) {
+                return Response.errorResponse("cancelLike_token失效，请重新登录");
+            }
+            int userId = user.getId();
+            userOperationService.cancelLike(ansId, userId);
+            return Response.successResponse();
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("取消点赞失败");
+            return Response.errorResponse("取消点赞失败");
+        }
+    }
+
     @RequestMapping(value = "hasLike", method = RequestMethod.GET)
     public Response hasLike(@RequestHeader("token") String token, Integer ansId) {
         try {
@@ -160,7 +203,7 @@ public class AnswerController {
         }
     }
 
-    @RequestMapping(value = "comment", method = RequestMethod.GET)
+    @RequestMapping(value = "comment", method = RequestMethod.POST)
     public Response comment(@RequestHeader("token") String token, String comment, Integer ansId) {
         try {
             User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
@@ -174,6 +217,7 @@ public class AnswerController {
             ansComment.setCommentContent(comment);
              commentAndReplyService.addComment(ansComment);
              Integer commentId=ansComment.getId();
+             logger.info("commentId:"+commentId);
             AnsCommentVo data = commentAndReplyService.getCommentById(commentId);
             return Response.successResponseWithData(data);
         } catch (Exception e) {
@@ -184,7 +228,7 @@ public class AnswerController {
         }
     }
 
-    @RequestMapping(value = "comment/reply", method = RequestMethod.GET)
+    @RequestMapping(value = "comment/reply", method = RequestMethod.POST)
     public Response reply(@RequestHeader("token") String token, String comtent, Integer commentId, Integer replyedUserId) {
         try {
             User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);

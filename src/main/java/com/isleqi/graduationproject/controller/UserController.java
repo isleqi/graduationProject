@@ -10,8 +10,10 @@ import com.isleqi.graduationproject.component.common.domain.Sms;
 import com.isleqi.graduationproject.domain.User;
 import com.isleqi.graduationproject.domain.UserAuth;
 import com.isleqi.graduationproject.domain.vo.AnswerVo;
+import com.isleqi.graduationproject.domain.vo.QuestionVo;
 import com.isleqi.graduationproject.domain.vo.UserInfoVo;
 import com.isleqi.graduationproject.service.AnswerService;
+import com.isleqi.graduationproject.service.QuestionService;
 import com.isleqi.graduationproject.service.UserOperationService;
 import com.isleqi.graduationproject.service.UserService;
 import com.isleqi.graduationproject.util.FileUtil;
@@ -47,6 +49,8 @@ public class UserController {
     UserService userService;
     @Autowired
     AnswerService answerService;
+    @Autowired
+    QuestionService questionService;
     @Autowired
     UserOperationService userOperationService;
 
@@ -216,6 +220,63 @@ public class UserController {
             return  Response.errorResponse("获取收藏列表失败");
         }
     }
+
+    @RequestMapping(value = "getFollowQuesList", method = RequestMethod.GET)
+    public Response getFollowQuesList(@RequestHeader("token") String token,@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){
+        try{
+            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
+            if(user==null){
+                return Response.errorResponse("token失效，请重新登录");
+            }
+            int userId=user.getId();
+            PageBean<QuestionVo> data = questionService.getFollowQuestionList(userId,pageNum,pageSize);
+
+            return Response.successResponseWithData(data);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.info("获取收藏列表失败");
+            return  Response.errorResponse("获取收藏列表失败");
+        }
+    }
+    @RequestMapping(value = "getMyAnswer", method = RequestMethod.GET)
+    public Response getMyAnswer(@RequestHeader("token") String token,@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){
+        try{
+            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
+            if(user==null){
+                return Response.errorResponse("token失效，请重新登录");
+            }
+            int userId=user.getId();
+            PageBean<AnswerVo> data = answerService.getListByUserId(pageNum,pageSize,userId);
+
+            return Response.successResponseWithData(data);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.info("获取我的回答失败");
+            return  Response.errorResponse("获取我的回答失败");
+        }
+    }
+
+    @RequestMapping(value = "getMyQuestion", method = RequestMethod.GET)
+    public Response getMyQuestion(@RequestHeader("token") String token,@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){
+        try{
+            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
+            if(user==null){
+                return Response.errorResponse("token失效，请重新登录");
+            }
+            int userId=user.getId();
+            PageBean<QuestionVo> data = questionService.getByUserId(pageNum,pageSize,userId);
+
+            return Response.successResponseWithData(data);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.info("获取我的提问失败");
+            return  Response.errorResponse("获取我的提问失败");
+        }
+    }
+
 
 
 

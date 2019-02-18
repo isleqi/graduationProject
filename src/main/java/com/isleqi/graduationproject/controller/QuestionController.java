@@ -62,6 +62,8 @@ public class QuestionController {
 
       //     Question question = questionService.getById(quesId);
 
+
+
             List<TagMapVo> tagMapVos = tagMapMapper.selectAllTagByQuesId(quesId);
             List<Tag> tags=new ArrayList<>();
             for(TagMapVo vo:tagMapVos){

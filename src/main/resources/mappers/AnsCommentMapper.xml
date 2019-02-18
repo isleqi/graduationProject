@@ -8,6 +8,7 @@
       <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="like_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="creat_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="reply_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
     </constructor>
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.isleqi.graduationproject.domain.AnsComment" >
@@ -18,6 +19,7 @@
       <arg column="like_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="creat_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
       <arg column="comment_content" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
+      <arg column="reply_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
     </constructor>
   </resultMap>
 
@@ -28,12 +30,13 @@
     <result column="user_id" property="userId" jdbcType="INTEGER" javaType="java.lang.Integer" />
     <result column="like_num" property="likeNum" jdbcType="INTEGER" javaType="java.lang.Integer" />
     <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    <result column="reply_num" property="replyNum" jdbcType="INTEGER" javaType="java.lang.Integer" />
     <result column="comment_content" property="commentContent" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
     <association property="user" column="user_id" select="com.isleqi.graduationproject.dao.mappers.UserMapper.selectByPrimaryKey" />
   </resultMap>
 
   <sql id="Base_Column_List" >
-    id, ans_id, user_id, like_num, creat_time
+    id, ans_id, user_id, like_num, creat_time,reply_num
   </sql>
   <sql id="Blob_Column_List" >
     comment_content
@@ -52,7 +55,7 @@
     ,
     <include refid="Blob_Column_List" />
     from ans_comment
-    where ans_id = #{ansId,jdbcType=INTEGER}
+    where ans_id = #{ansId,jdbcType=INTEGER} order by creat_time desc
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from ans_comment
@@ -66,7 +69,7 @@
       #{likeNum,jdbcType=INTEGER}, #{creatTime,jdbcType=TIMESTAMP}, #{commentContent,jdbcType=LONGVARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.AnsComment" >
+  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.AnsComment" useGeneratedKeys="true" keyProperty="id" >
     insert into ans_comment
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -81,9 +84,9 @@
       <if test="likeNum != null" >
         like_num,
       </if>
-      <if test="creatTime != null" >
+
         creat_time,
-      </if>
+
       <if test="commentContent != null" >
         comment_content,
       </if>
@@ -101,9 +104,7 @@
       <if test="likeNum != null" >
         #{likeNum,jdbcType=INTEGER},
       </if>
-      <if test="creatTime != null" >
-        #{creatTime,jdbcType=TIMESTAMP},
-      </if>
+      now(),
       <if test="commentContent != null" >
         #{commentContent,jdbcType=LONGVARCHAR},
       </if>
@@ -147,4 +148,11 @@
       creat_time = #{creatTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <update id="addReplyNum" >
+    update ans_comment
+    set reply_num=reply_num+1
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
 </mapper>

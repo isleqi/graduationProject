@@ -22,6 +22,8 @@ public interface QuestionMapper {
 
     List<QuestionVo> selectByTagId(Integer tagId);
 
+    List<QuestionVo> selectByUserId(Integer tagId);
+
     List<QuestionVo> selectQuesWithAns();
 
     List<QuestionVo> selectFollowQuesWithAns(Integer userId);
@@ -35,4 +37,8 @@ public interface QuestionMapper {
     int addFollowNum(Integer id);
 
     int subFollowNum(Integer id);
+
+    int addAnswerNum(Integer id);
+
+    int subAnswerNum(Integer id);
 }

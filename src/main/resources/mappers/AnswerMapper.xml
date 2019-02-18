@@ -84,7 +84,7 @@
     where ques_id = #{quesId,jdbcType=INTEGER}
   </select>
 
-  <select id="selectListByUserId" resultMap="ResultMapWithUser" parameterType="java.lang.Integer" >
+  <select id="selectListByUserId" resultMap="ResultMapWithUserAndQues" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List" />
     ,
@@ -218,4 +218,20 @@
       edit_time = #{editTime,jdbcType=TIMESTAMP}
     where ans_id = #{ansId,jdbcType=INTEGER}
   </update>
+  <update id="addLikeNum" parameterType="com.isleqi.graduationproject.domain.Answer">
+    update answer
+    set like_num=like_num+1
+    where ans_id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="subLikeNum" parameterType="com.isleqi.graduationproject.domain.Answer">
+    update answer
+    set like_num=like_num-1
+    where ans_id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="addCommentNum" parameterType="com.isleqi.graduationproject.domain.Answer">
+    update answer
+    set comment_num=comment_num+1
+    where ans_id = #{id,jdbcType=INTEGER}
+  </update>
+
 </mapper>

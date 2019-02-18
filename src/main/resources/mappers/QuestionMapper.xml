@@ -10,6 +10,7 @@
             <arg column="ques_user_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="quesd_user_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="follow_num" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="answer_num" jdbcType="INTEGER" javaType="java.lang.Integer"/>
         </constructor>
     </resultMap>
 
@@ -19,6 +20,7 @@
         <result column="ques_title" property="quesTitle" jdbcType="VARCHAR" javaType="java.lang.String"/>
         <result column="ques_des" property="quesDes" jdbcType="VARCHAR" javaType="java.lang.String"/>
         <result column="follow_num" property="followNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="answer_num" property="answerNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
     </resultMap>
 
 
@@ -28,21 +30,22 @@
         <result column="ques_title" property="quesTitle" jdbcType="VARCHAR" javaType="java.lang.String"/>
         <result column="ques_des" property="quesDes" jdbcType="VARCHAR" javaType="java.lang.String"/>
         <result column="follow_num" property="followNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="answer_num" property="answerNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
         <association property="answerVo" column="id"
                      select="com.isleqi.graduationproject.dao.mappers.AnswerMapper.selectByQuesId"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-    id, ques_title, ques_des, ques_user_id, quesd_user_id,follow_num
+    id, ques_title, ques_des, ques_user_id, quesd_user_id,follow_num,answer_num
   </sql>
 
     <select id="selectQuesWithAns" resultMap="ResultMapWithAns">
-        select id,ques_title,ques_des,follow_num
+        select id,ques_title,ques_des,follow_num,answer_num
         from question
     </select>
 
     <select id="selectFollowQuesWithAns" resultMap="ResultMapWithAns">
-       select id,ques_title,ques_des
+       select id,ques_title,ques_des,follow_num,answer_num
         from question where id in(select ques_id from user_follow_ques where user_id=#{userId})
     </select>
 
@@ -52,6 +55,14 @@
         from question
         where id = #{id,jdbcType=INTEGER}
     </select>
+
+    <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from question
+        where ques_user_id = #{userId,jdbcType=INTEGER}
+    </select>
+
     <select id="selectByTagId" resultType="com.isleqi.graduationproject.domain.vo.QuestionVo"
             parameterType="java.lang.Integer">
     select
@@ -163,6 +174,18 @@
     <update id="subFollowNum" parameterType="com.isleqi.graduationproject.domain.Question">
     update question
     set follow_num=follow_num-1
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <update id="addAnswerNum" parameterType="com.isleqi.graduationproject.domain.Question">
+    update question
+    set answer_num=answer_num+1
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <update id="subAnswerNum" parameterType="com.isleqi.graduationproject.domain.Question">
+    update question
+    set answer_num=answer_num-1
     where id = #{id,jdbcType=INTEGER}
   </update>
 

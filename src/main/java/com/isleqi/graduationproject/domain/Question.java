@@ -23,13 +23,16 @@ public class Question {
 
     private Date editTime;
 
-    public Question(Integer id,String  quesTitle,String quesDes, Integer quesUserId, Integer quesdUserId,Integer followNum){
+    private Integer answerNum;
+
+    public Question(Integer id,String  quesTitle,String quesDes, Integer quesUserId, Integer quesdUserId,Integer followNum,Integer answerNum){
         this.id=id;
         this.quesTitle=quesTitle;
         this.quesDes=quesDes;
         this.quesUserId=quesUserId;
         this.quesdUserId=quesdUserId;
         this.followNum=followNum;
+        this.answerNum=answerNum;
 
     }
 

@@ -22,6 +22,8 @@ public class UserOperationServiceImpl implements UserOperationService {
     @Autowired
     UserLikeAnsMapper userLikeAnsMapper;
     @Autowired
+    AnswerMapper answerMapper;
+    @Autowired
     QuestionMapper questionMapper;
 
 
@@ -117,6 +119,17 @@ public class UserOperationServiceImpl implements UserOperationService {
         userLikeAnsKey.setAnsId(ansId);
         userLikeAnsKey.setUserId(userId);
         userLikeAnsMapper.insertSelective(userLikeAnsKey);
+        answerMapper.addLikeNum(ansId);
+    }
+
+    @Override
+    @Transactional
+    public void cancelLike(Integer ansId, Integer userId) {
+        UserLikeAnsKey userLikeAnsKey = new UserLikeAnsKey();
+        userLikeAnsKey.setAnsId(ansId);
+        userLikeAnsKey.setUserId(userId);
+        userLikeAnsMapper.deleteByPrimaryKey(userLikeAnsKey);
+        answerMapper.subLikeNum(ansId);
     }
 
     @Override

@@ -15,6 +15,8 @@ public class AnsCommentVo {
 
     private Integer likeNum;
 
+    private Integer replyNum;
+
     private Date creatTime;
 
     private String commentContent;

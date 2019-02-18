@@ -5,10 +5,7 @@ import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.dao.mappers.QuestionMapper;
 import com.isleqi.graduationproject.dao.mappers.TagMapMapper;
 import com.isleqi.graduationproject.dao.mappers.UserFollowQuesMapper;
-import com.isleqi.graduationproject.domain.Answer;
-import com.isleqi.graduationproject.domain.Question;
-import com.isleqi.graduationproject.domain.Tag;
-import com.isleqi.graduationproject.domain.TagMap;
+import com.isleqi.graduationproject.domain.*;
 import com.isleqi.graduationproject.domain.vo.AnswerVo;
 import com.isleqi.graduationproject.domain.vo.QuestionParamVo;
 import com.isleqi.graduationproject.domain.vo.QuestionVo;
@@ -52,6 +49,11 @@ public class QuestionServiceImpl implements QuestionService {
 
         int quesId=question.getId();
 
+        UserFollowQues userFollowQues = new UserFollowQues();
+        userFollowQues.setQuesId(quesId);
+        userFollowQues.setUserId(questionParamVo.getQuesUserId());
+        userFollowQuesMapper.insertSelective(userFollowQues);
+
         Integer[] tagIds=questionParamVo.getTagIds();
        List<TagMap> list=new ArrayList<>();
         for(int tagId:tagIds){
@@ -86,6 +88,24 @@ public class QuestionServiceImpl implements QuestionService {
         }catch (Exception e){
             e.printStackTrace();
         } finally {
+            PageHelper.clearPage();
+        }
+        PageBean<QuestionVo> info = new PageBean<>(list);
+
+        return info;
+    }
+
+    @Override
+    public PageBean<QuestionVo> getByUserId(int pageNum, int pageSize, int userId) {
+        PageHelper.startPage(pageNum, pageSize);
+        ArrayList<QuestionVo> list=null;
+
+        try {
+            list = (ArrayList<QuestionVo>) questionMapper.selectByUserId(userId);
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }finally {
             PageHelper.clearPage();
         }
         PageBean<QuestionVo> info = new PageBean<>(list);

@@ -53,7 +53,7 @@
      id, ans_comment_id, reply_id, reply_user_id, replyed_user_id, reply_comtent, like_num,
     creat_time
     from ans_reply
-    where ans_comment_id = #{commentId,jdbcType=INTEGER}
+    where ans_comment_id = #{commentId,jdbcType=INTEGER} order by creat_time desc
   </select>
   <select id="selectByReplyId" resultMap="ResultMapWithUser" parameterType="java.lang.Integer" >
     select
@@ -73,7 +73,7 @@
       #{replyUserId,jdbcType=INTEGER}, #{replyedUserId,jdbcType=INTEGER}, #{replyComtent,jdbcType=VARCHAR}, 
       #{likeNum,jdbcType=INTEGER}, #{creatTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.AnsReply" >
+  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.AnsReply" useGeneratedKeys="true" keyProperty="id">
     insert into ans_reply
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -97,9 +97,9 @@
       <if test="likeNum != null" >
         like_num,
       </if>
-      <if test="creatTime != null" >
+
         creat_time,
-      </if>
+
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -123,9 +123,7 @@
       <if test="likeNum != null" >
         #{likeNum,jdbcType=INTEGER},
       </if>
-      <if test="creatTime != null" >
-        #{creatTime,jdbcType=TIMESTAMP},
-      </if>
+     now(),
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.isleqi.graduationproject.domain.AnsReply" >

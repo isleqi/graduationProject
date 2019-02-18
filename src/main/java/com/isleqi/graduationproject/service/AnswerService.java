@@ -24,7 +24,11 @@ public interface AnswerService {
 
     int addAnswer(AnswerParamVo answerParamVo);
 
+    int delAnswer(Integer ansId,Integer quesId);
+
     void updateAnswer(Answer answer);
+
+    void updateAnswer(String content,Integer ansId);
 
 
 
