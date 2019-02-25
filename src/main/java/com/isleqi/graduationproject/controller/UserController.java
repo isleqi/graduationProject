@@ -12,6 +12,7 @@ import com.isleqi.graduationproject.domain.UserAuth;
 import com.isleqi.graduationproject.domain.vo.AnswerVo;
 import com.isleqi.graduationproject.domain.vo.QuestionVo;
 import com.isleqi.graduationproject.domain.vo.UserInfoVo;
+import com.isleqi.graduationproject.domain.vo.UserRelationVo;
 import com.isleqi.graduationproject.service.AnswerService;
 import com.isleqi.graduationproject.service.QuestionService;
 import com.isleqi.graduationproject.service.UserOperationService;
@@ -276,6 +277,46 @@ public class UserController {
             return  Response.errorResponse("获取我的提问失败");
         }
     }
+
+    @RequestMapping(value = "getFollowUsers", method = RequestMethod.GET)
+    public Response getFollowUsers(@RequestHeader("token") String token, @RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){
+        try{
+            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
+            if(user==null){
+                return Response.errorResponse("token失效，请重新登录");
+            }
+            int userId=user.getId();
+            PageBean<UserRelationVo> data = userService.getFollowUserList(userId,pageNum,pageSize);
+
+            return Response.successResponseWithData(data);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.info("获取我的关注用户失败");
+            return  Response.errorResponse("获取我的关注用户失败");
+        }
+    }
+
+    @RequestMapping(value = "getFanUsers", method = RequestMethod.GET)
+    public Response getFanUsers(@RequestHeader("token") String token, @RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){
+        try{
+            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
+            if(user==null){
+                return Response.errorResponse("token失效，请重新登录");
+            }
+            int userId=user.getId();
+            PageBean<UserRelationVo> data = userService.getFanUserList(userId,pageNum,pageSize);
+
+            return Response.successResponseWithData(data);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.info("获取我的粉丝用户失败");
+            return  Response.errorResponse("获取我的粉丝用户失败");
+        }
+    }
+
+
 
 
 

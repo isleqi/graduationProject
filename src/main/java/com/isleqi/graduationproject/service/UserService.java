@@ -3,8 +3,10 @@ package com.isleqi.graduationproject.service;
 import java.util.List;
 import java.util.Map;
 
+import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.domain.UserAuth;
 import com.isleqi.graduationproject.domain.vo.UserInfoVo;
+import com.isleqi.graduationproject.domain.vo.UserRelationVo;
 import io.swagger.models.auth.In;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +40,11 @@ public interface UserService{
 
 	List<Integer> getFanIds(Integer userId);
 
+	PageBean<UserRelationVo> getFollowUserList(int userId, int pageNum, int pageSize);
 
-	
+	PageBean<UserRelationVo> getFanUserList(int userId, int pageNum, int pageSize);
+
+
+
+
 }

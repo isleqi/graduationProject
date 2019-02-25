@@ -25,6 +25,8 @@ public class UserOperationServiceImpl implements UserOperationService {
     AnswerMapper answerMapper;
     @Autowired
     QuestionMapper questionMapper;
+    @Autowired
+    UserValueMapper userValueMapper;
 
 
     @Override
@@ -130,6 +132,11 @@ public class UserOperationServiceImpl implements UserOperationService {
         userLikeAnsKey.setUserId(userId);
         userLikeAnsMapper.deleteByPrimaryKey(userLikeAnsKey);
         answerMapper.subLikeNum(ansId);
+    }
+
+    @Override
+    public void thanks(Integer userId,Integer value) {
+       userValueMapper.updateValue(userId,value);
     }
 
     @Override

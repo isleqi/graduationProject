@@ -11,7 +11,7 @@ public class GithubOauth2 extends Oauth2{
 
     static String client_ID = "742507a3c11705661108";
     static String client_SERCRET = "9478b727ba0c376b94ff3d00d01ea457552548e5";
-    static String redirect_URI = "http://192.168.1.6:8070/app/login/githubOauth";
+    static String redirect_URI = "http://192.168.1.100:8070/app/login/githubOauth";
 
 
     public static String getAccessToken(String code) {

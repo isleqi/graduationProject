@@ -77,8 +77,13 @@ public class RegisterController {
         //将token放入redis
         if(redisUtil == null) {
             logger.info("redisUtil为空");
+
+
         }
-        redisUtil.set(RedisKeyPrefix.USER_TOKEN+token,account);
+
+
+
+        redisUtil.set(RedisKeyPrefix.USER_TOKEN+token,user);
 
 
         return Response.successResponseWithData(token);

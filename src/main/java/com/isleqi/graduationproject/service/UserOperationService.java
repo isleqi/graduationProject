@@ -24,4 +24,6 @@ public interface UserOperationService {
     void setLike(Integer ansId,Integer userId);
 
     void cancelLike(Integer ansId, Integer userId);
+
+    void thanks(Integer userId,Integer value);
 }

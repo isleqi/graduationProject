@@ -168,7 +168,22 @@ public class AnswerController {
             return Response.errorResponse("点赞失败");
         }
     }
-
+    @RequestMapping(value = "thanks", method = RequestMethod.GET)
+    public Response thanks(@RequestHeader("token") String token) {
+        try {
+            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+            if (user == null) {
+                return Response.errorResponse("setLike_token失效，请重新登录");
+            }
+            int userId = user.getId();
+            userOperationService.thanks(userId,5);
+            return Response.successResponse();
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("打赏失败");
+            return Response.errorResponse("打赏失败");
+        }
+    }
     @RequestMapping(value = "cancelLike", method = RequestMethod.GET)
     public Response cancelLike(@RequestHeader("token") String token, Integer ansId) {
         try {

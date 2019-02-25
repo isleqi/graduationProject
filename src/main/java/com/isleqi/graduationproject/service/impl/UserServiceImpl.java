@@ -3,12 +3,15 @@ package com.isleqi.graduationproject.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.github.pagehelper.PageHelper;
+import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.dao.mappers.UserAuthMapper;
 import com.isleqi.graduationproject.dao.mappers.UserMapper;
 import com.isleqi.graduationproject.dao.mappers.UserRelationsMapper;
 import com.isleqi.graduationproject.domain.UserAuth;
 import com.isleqi.graduationproject.domain.UserRelationsKey;
 import com.isleqi.graduationproject.domain.vo.UserInfoVo;
+import com.isleqi.graduationproject.domain.vo.UserRelationVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -89,6 +92,36 @@ public class UserServiceImpl  implements UserService{
 	public List<Integer> getFanIds(Integer userId) {
 		return userRelationsMapper.getFanIds(userId);
 	}
+
+	@Override
+	public PageBean<UserRelationVo> getFollowUserList(int userId, int pageNum, int pageSize) {
+		PageHelper.startPage(pageNum, pageSize);
+		List<UserRelationVo> list=null;
+		try{
+			list=userRelationsMapper.getFollowUsers(userId);
+		}catch (Exception e){
+			e.printStackTrace();
+		}finally {
+			PageHelper.clearPage();
+		}
+		PageBean<UserRelationVo> info = new PageBean<>(list);
+
+		return info;	}
+
+	@Override
+	public PageBean<UserRelationVo> getFanUserList(int userId, int pageNum, int pageSize) {
+		PageHelper.startPage(pageNum, pageSize);
+		List<UserRelationVo> list=null;
+		try{
+			list=userRelationsMapper.getFanUsers(userId);
+		}catch (Exception e){
+			e.printStackTrace();
+		}finally {
+			PageHelper.clearPage();
+		}
+		PageBean<UserRelationVo> info = new PageBean<>(list);
+
+		return info;	}
 
 
 }
