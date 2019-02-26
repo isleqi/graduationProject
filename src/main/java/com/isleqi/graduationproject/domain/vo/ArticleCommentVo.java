@@ -6,29 +6,20 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class ArticleVo {
+public class ArticleCommentVo {
+    private Integer id;
+
     private Integer articleId;
 
     private Integer userId;
 
-    private Integer type;
-
-    private Integer value;
-
     private Integer likeNum;
 
-    private Integer commentNum;
-
-    private Integer browser;
+    private Integer replyNum;
 
     private Date creatTime;
 
-    private Date editTime;
-
-    private String articleTitle;
-
-    private String articleContent;
+    private String commentContent;
 
     private User user;
-
 }

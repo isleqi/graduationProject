@@ -5,6 +5,8 @@ import com.isleqi.graduationproject.domain.vo.ArticleVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @Mapper
 public interface ArticleMapper {
@@ -16,9 +18,20 @@ public interface ArticleMapper {
 
     ArticleVo selectByPrimaryKey(Integer articleId);
 
+    List<ArticleVo> selectArticleList();
+
+    List<ArticleVo> selectFollowUserArticle(Integer userId);
+
     int updateByPrimaryKeySelective(Article record);
 
     int updateByPrimaryKeyWithBLOBs(Article record);
 
     int updateByPrimaryKey(Article record);
+
+    int addLikeNum(Integer id);
+
+    int subLikeNum(Integer id);
+
+    int addCommentNum(Integer id);
+
 }

@@ -12,8 +12,6 @@ public interface CommentAndReplyService {
 
     void addComment(AnsComment ansComment);
 
-
-
     void addReply(AnsReply ansReply);
 
     AnsCommentVo getCommentById(Integer id);

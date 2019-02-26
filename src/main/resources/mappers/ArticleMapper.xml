@@ -1,71 +1,87 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.isleqi.graduationproject.dao.mappers.ArticleMapper" >
-  <resultMap id="BaseResultMap" type="com.isleqi.graduationproject.domain.Article" >
-    <constructor >
-      <idArg column="article_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="article_title" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="type" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="value" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="like_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="comment_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="browse" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="creat_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-      <arg column="edit_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-    </constructor>
-  </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.isleqi.graduationproject.domain.Article" >
-    <constructor >
-      <idArg column="article_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="article_title" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="type" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="value" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="like_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="comment_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="browse" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="creat_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-      <arg column="edit_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-      <arg column="article_content" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
-    </constructor>
-  </resultMap>
-  <resultMap id="ResultMapWithUser" type="com.isleqi.graduationproject.domain.vo.ArticleVo" >
+<mapper namespace="com.isleqi.graduationproject.dao.mappers.ArticleMapper">
+    <resultMap id="BaseResultMap" type="com.isleqi.graduationproject.domain.Article">
+        <constructor>
+            <idArg column="article_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="article_title" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="type" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="value" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="like_num" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="comment_num" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="browse" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="creat_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="edit_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.isleqi.graduationproject.domain.Article">
+        <constructor>
+            <idArg column="article_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="article_title" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="type" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="value" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="like_num" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="comment_num" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="browse" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="creat_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="edit_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="article_content" jdbcType="LONGVARCHAR" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="ResultMapWithUser" type="com.isleqi.graduationproject.domain.vo.ArticleVo">
 
-    <id column="article_id" property="articleId" jdbcType="INTEGER" javaType="java.lang.Integer" />
-    <result column="user_id" property="userId" jdbcType="INTEGER" javaType="java.lang.Integer" />
-    <result column="type" property="type" jdbcType="INTEGER" javaType="java.lang.Integer" />
-    <result column="value" property="value" jdbcType="INTEGER" javaType="java.lang.Integer" />
-    <result column="browser" property="browser" jdbcType="INTEGER" javaType="java.lang.Integer" />
-    <result column="like_num" property="likeNum" jdbcType="INTEGER" javaType="java.lang.Integer" />
-    <result column="comment_num" property="commentNum" jdbcType="INTEGER" javaType="java.lang.Integer" />
-    <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-    <result column="edit_time" property="editTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-    <result column="article_content" property="articleContent" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
-    <result column="article_title" property="articleTitle" jdbcType="VARCHAR" javaType="java.lang.String" />
+        <id column="article_id" property="articleId" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="type" property="type" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="value" property="value" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="browser" property="browser" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="like_num" property="likeNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="comment_num" property="commentNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="edit_time" property="editTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="article_content" property="articleContent" jdbcType="LONGVARCHAR" javaType="java.lang.String"/>
+        <result column="article_title" property="articleTitle" jdbcType="VARCHAR" javaType="java.lang.String"/>
 
-    <association property="user" column="user_id" select="com.isleqi.graduationproject.dao.mappers.UserMapper.selectByPrimaryKey" />
-  </resultMap>
-  <sql id="Base_Column_List" >
+        <association property="user" column="user_id"
+                     select="com.isleqi.graduationproject.dao.mappers.UserMapper.selectByPrimaryKey"/>
+    </resultMap>
+    <sql id="Base_Column_List">
     article_id, user_id, article_title, type, value, like_num, comment_num, browse, creat_time, 
     edit_time
   </sql>
-  <sql id="Blob_Column_List" >
+    <sql id="Blob_Column_List">
     article_content
   </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithUser" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from article
-    where article_id = #{articleId,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithUser" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from article
+        where article_id = #{articleId,jdbcType=INTEGER}
+    </select>
+    <select id="selectArticleList" resultMap="ResultMapWithUser">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from article
+        ORDER By creat_time desc
+    </select>
+    <select id="selectFollowUserArticle" resultMap="ResultMapWithUser">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from article where user_id in(select follow_id from user_relations where user_id=#{userId}) ORDER BY creat_time desc
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from article
     where article_id = #{articleId,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.isleqi.graduationproject.domain.Article" >
+    <insert id="insert" parameterType="com.isleqi.graduationproject.domain.Article">
     insert into article (article_id, user_id, article_title, 
       type, value, like_num, 
       comment_num, browse, creat_time, 
@@ -75,116 +91,113 @@
       #{commentNum,jdbcType=INTEGER}, #{browse,jdbcType=INTEGER}, #{creatTime,jdbcType=TIMESTAMP}, 
       #{editTime,jdbcType=TIMESTAMP}, #{articleContent,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.Article" >
-    insert into article
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="articleId != null" >
-        article_id,
-      </if>
-      <if test="userId != null" >
-        user_id,
-      </if>
-      <if test="articleTitle != null" >
-        article_title,
-      </if>
-      <if test="type != null" >
-        type,
-      </if>
-      <if test="value != null" >
-        value,
-      </if>
-      <if test="likeNum != null" >
-        like_num,
-      </if>
-      <if test="commentNum != null" >
-        comment_num,
-      </if>
-      <if test="browse != null" >
-        browse,
-      </if>
-      <if test="creatTime != null" >
-        creat_time,
-      </if>
-      <if test="editTime != null" >
-        edit_time,
-      </if>
-      <if test="articleContent != null" >
-        article_content,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="articleId != null" >
-        #{articleId,jdbcType=INTEGER},
-      </if>
-      <if test="userId != null" >
-        #{userId,jdbcType=INTEGER},
-      </if>
-      <if test="articleTitle != null" >
-        #{articleTitle,jdbcType=VARCHAR},
-      </if>
-      <if test="type != null" >
-        #{type,jdbcType=INTEGER},
-      </if>
-      <if test="value != null" >
-        #{value,jdbcType=INTEGER},
-      </if>
-      <if test="likeNum != null" >
-        #{likeNum,jdbcType=INTEGER},
-      </if>
-      <if test="commentNum != null" >
-        #{commentNum,jdbcType=INTEGER},
-      </if>
-      <if test="browse != null" >
-        #{browse,jdbcType=INTEGER},
-      </if>
-      <if test="creatTime != null" >
-        #{creatTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="editTime != null" >
-        #{editTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="articleContent != null" >
-        #{articleContent,jdbcType=LONGVARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.isleqi.graduationproject.domain.Article" >
-    update article
-    <set >
-      <if test="userId != null" >
-        user_id = #{userId,jdbcType=INTEGER},
-      </if>
-      <if test="articleTitle != null" >
-        article_title = #{articleTitle,jdbcType=VARCHAR},
-      </if>
-      <if test="type != null" >
-        type = #{type,jdbcType=INTEGER},
-      </if>
-      <if test="value != null" >
-        value = #{value,jdbcType=INTEGER},
-      </if>
-      <if test="likeNum != null" >
-        like_num = #{likeNum,jdbcType=INTEGER},
-      </if>
-      <if test="commentNum != null" >
-        comment_num = #{commentNum,jdbcType=INTEGER},
-      </if>
-      <if test="browse != null" >
-        browse = #{browse,jdbcType=INTEGER},
-      </if>
-      <if test="creatTime != null" >
-        creat_time = #{creatTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="editTime != null" >
-        edit_time = #{editTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="articleContent != null" >
-        article_content = #{articleContent,jdbcType=LONGVARCHAR},
-      </if>
-    </set>
-    where article_id = #{articleId,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.isleqi.graduationproject.domain.Article" >
+    <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.Article" useGeneratedKeys="true"
+            keyProperty="articleId">
+        insert into article
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="articleId != null">
+                article_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="articleTitle != null">
+                article_title,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="value != null">
+                value,
+            </if>
+            <if test="likeNum != null">
+                like_num,
+            </if>
+            <if test="commentNum != null">
+                comment_num,
+            </if>
+            <if test="browse != null">
+                browse,
+            </if>
+
+            creat_time,
+
+
+            edit_time,
+
+            <if test="articleContent != null">
+                article_content,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="articleId != null">
+                #{articleId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="articleTitle != null">
+                #{articleTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="value != null">
+                #{value,jdbcType=INTEGER},
+            </if>
+            <if test="likeNum != null">
+                #{likeNum,jdbcType=INTEGER},
+            </if>
+            <if test="commentNum != null">
+                #{commentNum,jdbcType=INTEGER},
+            </if>
+            <if test="browse != null">
+                #{browse,jdbcType=INTEGER},
+            </if>
+            now(),
+            now(),
+            <if test="articleContent != null">
+                #{articleContent,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.isleqi.graduationproject.domain.Article">
+        update article
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="articleTitle != null">
+                article_title = #{articleTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="value != null">
+                value = #{value,jdbcType=INTEGER},
+            </if>
+            <if test="likeNum != null">
+                like_num = #{likeNum,jdbcType=INTEGER},
+            </if>
+            <if test="commentNum != null">
+                comment_num = #{commentNum,jdbcType=INTEGER},
+            </if>
+            <if test="browse != null">
+                browse = #{browse,jdbcType=INTEGER},
+            </if>
+            <if test="creatTime != null">
+                creat_time = #{creatTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="editTime != null">
+                edit_time = #{editTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="articleContent != null">
+                article_content = #{articleContent,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where article_id = #{articleId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.isleqi.graduationproject.domain.Article">
     update article
     set user_id = #{userId,jdbcType=INTEGER},
       article_title = #{articleTitle,jdbcType=VARCHAR},
@@ -198,7 +211,7 @@
       article_content = #{articleContent,jdbcType=LONGVARCHAR}
     where article_id = #{articleId,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.isleqi.graduationproject.domain.Article" >
+    <update id="updateByPrimaryKey" parameterType="com.isleqi.graduationproject.domain.Article">
     update article
     set user_id = #{userId,jdbcType=INTEGER},
       article_title = #{articleTitle,jdbcType=VARCHAR},
@@ -211,4 +224,21 @@
       edit_time = #{editTime,jdbcType=TIMESTAMP}
     where article_id = #{articleId,jdbcType=INTEGER}
   </update>
+
+    <update id="addLikeNum" parameterType="com.isleqi.graduationproject.domain.Article">
+    update article
+    set like_num=like_num+1
+    where article_id = #{id,jdbcType=INTEGER}
+  </update>
+    <update id="subLikeNum" parameterType="com.isleqi.graduationproject.domain.Article">
+    update article
+    set like_num=like_num-1
+    where article_id = #{id,jdbcType=INTEGER}
+  </update>
+    <update id="addCommentNum" parameterType="com.isleqi.graduationproject.domain.Article">
+    update article
+    set comment_num=comment_num+1
+    where article_id = #{id,jdbcType=INTEGER}
+  </update>
+
 </mapper>

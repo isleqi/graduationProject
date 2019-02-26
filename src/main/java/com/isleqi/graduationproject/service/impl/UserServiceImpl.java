@@ -106,7 +106,8 @@ public class UserServiceImpl  implements UserService{
 		}
 		PageBean<UserRelationVo> info = new PageBean<>(list);
 
-		return info;	}
+		return info;
+	}
 
 	@Override
 	public PageBean<UserRelationVo> getFanUserList(int userId, int pageNum, int pageSize) {

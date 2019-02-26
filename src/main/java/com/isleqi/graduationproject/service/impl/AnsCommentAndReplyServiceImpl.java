@@ -17,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service("commentAndReplyService")
-public class CommentAndReplyServiceImpl implements CommentAndReplyService {
+@Service("ansCommentAndReplyService")
+public class AnsCommentAndReplyServiceImpl implements CommentAndReplyService {
     @Autowired
     AnsCommentMapper ansCommentMapper;
     @Autowired

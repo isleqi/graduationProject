@@ -9,6 +9,7 @@ import com.isleqi.graduationproject.domain.Answer;
 import com.isleqi.graduationproject.domain.User;
 import com.isleqi.graduationproject.domain.vo.*;
 import com.isleqi.graduationproject.service.AnswerService;
+
 import com.isleqi.graduationproject.service.CommentAndReplyService;
 import com.isleqi.graduationproject.service.UserOperationService;
 import com.isleqi.graduationproject.util.RedisUtil;
@@ -30,7 +31,7 @@ public class AnswerController {
     @Autowired
     UserOperationService userOperationService;
     @Autowired
-    CommentAndReplyService commentAndReplyService;
+    CommentAndReplyService ansCommentAndReplyService;
     @Autowired
     RedisUtil redisUtil;
 
@@ -230,10 +231,10 @@ public class AnswerController {
             ansComment.setAnsId(ansId);
             ansComment.setUserId(userId);
             ansComment.setCommentContent(comment);
-             commentAndReplyService.addComment(ansComment);
+            ansCommentAndReplyService.addComment(ansComment);
              Integer commentId=ansComment.getId();
              logger.info("commentId:"+commentId);
-            AnsCommentVo data = commentAndReplyService.getCommentById(commentId);
+            AnsCommentVo data = ansCommentAndReplyService.getCommentById(commentId);
             return Response.successResponseWithData(data);
         } catch (Exception e) {
             e.printStackTrace();
@@ -257,8 +258,8 @@ public class AnswerController {
             ansReply.setReplyComtent(comtent);
             ansReply.setReplyedUserId(replyedUserId);
             ansReply.setReplyUserId(userId);
-            commentAndReplyService.addReply(ansReply);
-            AnsReplyVo data = commentAndReplyService.getReplyById(ansReply.getId());
+            ansCommentAndReplyService.addReply(ansReply);
+            AnsReplyVo data = ansCommentAndReplyService.getReplyById(ansReply.getId());
             return Response.successResponseWithData(data);
         } catch (Exception e) {
             e.printStackTrace();
@@ -272,7 +273,7 @@ public class AnswerController {
     @RequestMapping(value = "getCommentList",method = RequestMethod.GET)
     public Response getCommentList(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("ansId") Integer ansId) {
         try {
-            PageBean<AnsCommentVo> data  = commentAndReplyService.getCommentByAnsId(ansId,pageNum,pageSize);
+            PageBean<AnsCommentVo> data  = ansCommentAndReplyService.getCommentByAnsId(ansId,pageNum,pageSize);
             return Response.successResponseWithData(data);
 
         }catch (Exception e){
@@ -285,7 +286,7 @@ public class AnswerController {
     @RequestMapping(value = "getReplyList",method = RequestMethod.GET)
     public Response getReplyList(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("commentId") Integer commentId) {
         try {
-            PageBean<AnsReplyVo> data  = commentAndReplyService.getReplyListByCommnetId(commentId,pageNum,pageSize);
+            PageBean<AnsReplyVo> data  = ansCommentAndReplyService.getReplyListByCommnetId(commentId,pageNum,pageSize);
             return Response.successResponseWithData(data);
         }catch (Exception e){
             e.printStackTrace();
