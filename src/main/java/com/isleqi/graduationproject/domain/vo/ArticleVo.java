@@ -19,7 +19,7 @@ public class ArticleVo {
 
     private Integer commentNum;
 
-    private Integer browser;
+    private Integer browse;
 
     private Date creatTime;
 
@@ -30,5 +30,7 @@ public class ArticleVo {
     private String articleContent;
 
     private User user;
+
+    private  Boolean hasPay;
 
 }

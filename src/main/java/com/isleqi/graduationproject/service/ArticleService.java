@@ -10,11 +10,15 @@ public interface ArticleService {
 
     ArticleVo getArticleById(Integer articleId);
 
-    PageBean<ArticleVo> getArticleList(int pageNum, int pageSize);
+    PageBean<ArticleVo> getArticleList(int userId,int pageNum, int pageSize);
 
     PageBean<ArticleVo> getFollowUserArticleList(int pageNum,int pageSize,Integer userId);
 
     int delArticle(Integer articleId);
 
     void updateArticle(String content,Integer articleId);
+
+    void payForArticle(Integer userId,Integer articleId, Integer value);
+
+    public int getUserValue(Integer userId);
 }

@@ -3,7 +3,10 @@ package com.isleqi.graduationproject.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.dao.mappers.ArticleMapper;
+import com.isleqi.graduationproject.dao.mappers.UserFollowArticleMapper;
+import com.isleqi.graduationproject.dao.mappers.UserValueMapper;
 import com.isleqi.graduationproject.domain.Article;
+import com.isleqi.graduationproject.domain.UserFollowArticle;
 import com.isleqi.graduationproject.domain.vo.ArticleParamVo;
 import com.isleqi.graduationproject.domain.vo.ArticleVo;
 import com.isleqi.graduationproject.service.ArticleService;
@@ -19,6 +22,10 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     ArticleMapper articleMapper;
+    @Autowired
+    UserValueMapper userValueMapper;
+    @Autowired
+    UserFollowArticleMapper userFollowArticleMapper;
 
     @Override
     public int addArticle(ArticleParamVo articleParamVo) {
@@ -33,16 +40,35 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public int getUserValue(Integer userId){
+      return  userValueMapper.selectByPrimaryKey(userId).getValue();
+    }
+
+    public Boolean hasFollowArticle(Integer articleId,Integer userId){
+        UserFollowArticle userFollowArticle=new UserFollowArticle();
+        userFollowArticle.setArticleId(articleId);
+        userFollowArticle.setUserId(userId);
+        UserFollowArticle data = userFollowArticleMapper.selectByPrimaryKey(userFollowArticle);
+        if(data==null)
+            return false;
+        return true;
+    }
+
+    @Override
     public ArticleVo getArticleById(Integer articleId) {
         return articleMapper.selectByPrimaryKey(articleId);
     }
 
     @Override
-    public PageBean<ArticleVo> getArticleList(int pageNum, int pageSize) {
+    public PageBean<ArticleVo> getArticleList(int userId,int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         List<ArticleVo> list=null;
         try{
             list=articleMapper.selectArticleList();
+            for (ArticleVo item:list) {
+             Boolean data=hasFollowArticle(item.getArticleId(),userId);
+             item.setHasPay(data);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }finally {
@@ -77,5 +103,17 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public void updateArticle(String content, Integer articleId) {
 
+    }
+
+    @Override
+    @Transactional
+    public void payForArticle(Integer userId,Integer articleId, Integer value) {
+        userValueMapper.updateValue(userId, value);
+        UserFollowArticle userFollowArticle=new UserFollowArticle();
+        userFollowArticle.setUserId(userId);
+        userFollowArticle.setValue(value);
+        userFollowArticle.setArticleId(articleId);
+        userFollowArticleMapper.insertSelective(userFollowArticle);
+        articleMapper.addBrowser(articleId);
     }
 }

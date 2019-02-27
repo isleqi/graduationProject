@@ -57,64 +57,9 @@
     set value = #{value,jdbcType=INTEGER}
     where user_id = #{userId,jdbcType=INTEGER}
   </update>
-  <resultMap id="BaseResultMap" type="com.isleqi.graduationproject.domain.UserValue">
-    <constructor>
-      <idArg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
-      <arg column="value" javaType="java.lang.Integer" jdbcType="INTEGER" />
-    </constructor>
-  </resultMap>
-  <sql id="Base_Column_List">
-    user_id, value
-  </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from user_value
-    where user_id = #{userId,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from user_value
-    where user_id = #{userId,jdbcType=INTEGER}
-  </delete>
-  <insert id="insert" parameterType="com.isleqi.graduationproject.domain.UserValue">
-    insert into user_value (user_id, value)
-    values (#{userId,jdbcType=INTEGER}, #{value,jdbcType=INTEGER})
-  </insert>
-  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.UserValue">
-    insert into user_value
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="userId != null">
-        user_id,
-      </if>
-      <if test="value != null">
-        value,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="userId != null">
-        #{userId,jdbcType=INTEGER},
-      </if>
-      <if test="value != null">
-        #{value,jdbcType=INTEGER},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.isleqi.graduationproject.domain.UserValue">
-    update user_value
-    <set>
-      <if test="value != null">
-        value = #{value,jdbcType=INTEGER},
-      </if>
-    </set>
-    where user_id = #{userId,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.isleqi.graduationproject.domain.UserValue">
-    update user_value
-    set value = #{value,jdbcType=INTEGER}
-    where user_id = #{userId,jdbcType=INTEGER}
-  </update>
 
-  <update id="updateValue" parameterType="com.isleqi.graduationproject.domain.UserValue">
+
+  <update id="updateValue" parameterType="java.lang.Integer">
     update user_value
     set value = value-#{value,jdbcType=INTEGER}
     where user_id = #{userId,jdbcType=INTEGER}

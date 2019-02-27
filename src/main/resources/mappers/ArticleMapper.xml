@@ -36,7 +36,7 @@
         <result column="user_id" property="userId" jdbcType="INTEGER" javaType="java.lang.Integer"/>
         <result column="type" property="type" jdbcType="INTEGER" javaType="java.lang.Integer"/>
         <result column="value" property="value" jdbcType="INTEGER" javaType="java.lang.Integer"/>
-        <result column="browser" property="browser" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="browse" property="browse" jdbcType="INTEGER" javaType="java.lang.Integer"/>
         <result column="like_num" property="likeNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
         <result column="comment_num" property="commentNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
         <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
@@ -238,6 +238,12 @@
     <update id="addCommentNum" parameterType="com.isleqi.graduationproject.domain.Article">
     update article
     set comment_num=comment_num+1
+    where article_id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <update id="addBrowser" parameterType="com.isleqi.graduationproject.domain.Article">
+    update article
+    set browse=browse+1
     where article_id = #{id,jdbcType=INTEGER}
   </update>
 

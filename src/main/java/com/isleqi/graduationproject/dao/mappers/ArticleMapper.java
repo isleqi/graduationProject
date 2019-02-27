@@ -34,4 +34,6 @@ public interface ArticleMapper {
 
     int addCommentNum(Integer id);
 
+    int addBrowser(Integer id);
+
 }

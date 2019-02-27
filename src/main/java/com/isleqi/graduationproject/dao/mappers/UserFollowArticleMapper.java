@@ -2,7 +2,11 @@ package com.isleqi.graduationproject.dao.mappers;
 
 import com.isleqi.graduationproject.domain.UserFollowArticle;
 import com.isleqi.graduationproject.domain.UserFollowArticleKey;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Component;
 
+@Component
+@Mapper
 public interface UserFollowArticleMapper {
     int deleteByPrimaryKey(UserFollowArticleKey key);
 

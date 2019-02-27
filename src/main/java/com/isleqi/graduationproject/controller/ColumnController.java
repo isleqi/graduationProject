@@ -56,9 +56,14 @@ public class ColumnController {
     }
 
     @RequestMapping(value = "getArticleList", method = RequestMethod.GET)
-    public Response getArticleList(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){
+    public Response getArticleList(@RequestHeader("token") String token,@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){
         try {
-            PageBean<ArticleVo> data =articleService.getArticleList(pageNum, pageSize);
+            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+            if (user == null) {
+                return Response.errorResponse("token失效，请重新登录");
+            }
+
+            PageBean<ArticleVo> data =articleService.getArticleList(user.getId(),pageNum, pageSize);
 
             return Response.successResponseWithData(data);
 
@@ -146,7 +151,6 @@ public class ColumnController {
     @RequestMapping(value = "getFollowUserArticleList",method = RequestMethod.GET)
     public Response getFollowUserArticleList(@RequestHeader("token") String token,@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){
         try{
-
             User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
             if(user==null){
                 return Response.errorResponse("token失效，请重新登录");
@@ -156,11 +160,29 @@ public class ColumnController {
             return Response.successResponseWithData(data);
         }
         catch (Exception e){
-            logger.info(e.getMessage());
             e.printStackTrace();
             return Response.errorResponse("获取关注的人文章列表失败");
         }
 
+    }
+
+    @RequestMapping(value = "payForArticle",method = RequestMethod.GET)
+    public Response payForArticle(@RequestHeader("token") String token,Integer articleId,Integer value){
+        try{
+            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
+            if(user==null){
+                return Response.errorResponse("token失效，请重新登录");
+            }
+            int userId=user.getId();
+            int userValue=articleService.getUserValue(userId);
+            if(userValue<value)
+                return Response.errorResponse("积分不足");
+            articleService.payForArticle(userId,articleId,value);
+            return Response.successResponse();
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.errorResponse("扣取积分失败");
+        }
     }
 
 
