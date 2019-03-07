@@ -3,14 +3,12 @@ package com.isleqi.graduationproject.controller;
 import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.component.common.RedisKeyPrefix;
 import com.isleqi.graduationproject.component.common.domain.Response;
-import com.isleqi.graduationproject.domain.AnsComment;
-import com.isleqi.graduationproject.domain.AnsReply;
-import com.isleqi.graduationproject.domain.Answer;
-import com.isleqi.graduationproject.domain.User;
+import com.isleqi.graduationproject.domain.*;
 import com.isleqi.graduationproject.domain.vo.*;
 import com.isleqi.graduationproject.service.AnswerService;
 
 import com.isleqi.graduationproject.service.CommentAndReplyService;
+import com.isleqi.graduationproject.service.NotifyService;
 import com.isleqi.graduationproject.service.UserOperationService;
 import com.isleqi.graduationproject.util.RedisUtil;
 import org.slf4j.Logger;
@@ -33,19 +31,39 @@ public class AnswerController {
     @Autowired
     CommentAndReplyService ansCommentAndReplyService;
     @Autowired
+    NotifyService notifyService;
+    @Autowired
     RedisUtil redisUtil;
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public Response add(@RequestHeader("token") String token, @RequestBody AnswerParamVo answerParamVo) {
+
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        AnswerVo answerVo;
+
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
             answerParamVo.setUserId(user.getId());
             int ansId = answerService.addAnswer(answerParamVo);
+            answerVo = answerService.getByAnsId(ansId);
 
-            AnswerVo answerVo = answerService.getByAnsId(ansId);
+            try{
+               Notify notify=new Notify();
+               notify.setType("发表回答");
+               notify.setSendUserId(user.getId());
+               notify.setTargetId(ansId);
+               notify.setTargetType(1);
+               notifyService.addNotifyToAllUserForQues(notify,answerParamVo.getQuesId());
+            }catch (Exception e){
+              e.printStackTrace();
+                logger.info("通知失败");
+            }
 
             return Response.successResponseWithData(answerVo);
 
@@ -53,6 +71,10 @@ public class AnswerController {
             logger.info(e.getMessage());
             return Response.errorResponse("添加答案失败");
         }
+
+
+
+
 
     }
 
@@ -85,7 +107,6 @@ public class AnswerController {
     @RequestMapping(value = "follow", method = RequestMethod.GET)
     public Response followAns(@RequestHeader("token") String token, @RequestParam("ansId") Integer ansId) {
         try {
-
             User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
             if (user == null) {
                 return Response.errorResponse("token失效，请重新登录");
@@ -155,13 +176,18 @@ public class AnswerController {
 
     @RequestMapping(value = "setLike", method = RequestMethod.GET)
     public Response setLike(@RequestHeader("token") String token, Integer ansId) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("setLike_token失效，请重新登录");
-            }
             int userId = user.getId();
             userOperationService.setLike(ansId, userId);
+
             return Response.successResponse();
         } catch (Exception e) {
             e.printStackTrace();
@@ -170,14 +196,30 @@ public class AnswerController {
         }
     }
     @RequestMapping(value = "thanks", method = RequestMethod.GET)
-    public Response thanks(@RequestHeader("token") String token) {
+    public Response thanks(@RequestHeader("token") String token,Integer ansId) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("setLike_token失效，请重新登录");
-            }
+
             int userId = user.getId();
-            userOperationService.thanks(userId,5);
+            AnswerVo data= answerService.getByAnsId(ansId);
+            userOperationService.thanks(userId,data.getUserId(),5);
+            try{
+                Notify notify=new Notify();
+                notify.setType("打赏");
+                notify.setSendUserId(user.getId());
+                notify.setTargetId(ansId);
+                notify.setTargetType(1);
+                notifyService.addNotify(notify,data.getUserId());
+            }catch (Exception e){
+                e.printStackTrace();
+                logger.info("通知失败");
+            }
             return Response.successResponse();
         } catch (Exception e) {
             e.printStackTrace();
@@ -235,6 +277,20 @@ public class AnswerController {
              Integer commentId=ansComment.getId();
              logger.info("commentId:"+commentId);
             AnsCommentVo data = ansCommentAndReplyService.getCommentById(commentId);
+
+            try{
+                Notify notify=new Notify();
+                notify.setType("评论");
+                notify.setSendUserId(user.getId());
+                notify.setTargetId(ansId);
+                notify.setContent(comment);
+                notify.setTargetType(1);
+                notifyService.addNotify(notify,data.getUserId());
+
+            }catch (Exception e){
+                e.printStackTrace();
+                logger.info("通知失败");
+            }
             return Response.successResponseWithData(data);
         } catch (Exception e) {
             e.printStackTrace();
@@ -260,6 +316,21 @@ public class AnswerController {
             ansReply.setReplyUserId(userId);
             ansCommentAndReplyService.addReply(ansReply);
             AnsReplyVo data = ansCommentAndReplyService.getReplyById(ansReply.getId());
+
+            try{
+                Notify notify=new Notify();
+                notify.setType("回复");
+                notify.setSendUserId(user.getId());
+                notify.setTargetId(commentId);
+                notify.setContent(comtent);
+                notify.setTargetType(5);
+                notifyService.addNotify(notify,replyedUserId);
+
+            }catch (Exception e){
+                e.printStackTrace();
+                logger.info("通知失败");
+            }
+
             return Response.successResponseWithData(data);
         } catch (Exception e) {
             e.printStackTrace();

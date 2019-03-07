@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.isleqi.graduationproject.dao.mappers.UserNotifyMapper" >
+  <resultMap id="BaseResultMap" type="com.isleqi.graduationproject.domain.UserNotify" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="read" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="notify_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, read, user_id, notify_id, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_notify
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user_notify
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.isleqi.graduationproject.domain.UserNotify" >
+    insert into user_notify (id, read, user_id,
+      notify_id, create_time)
+    values (#{id,jdbcType=INTEGER}, #{read,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+      #{notifyId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.UserNotify" >
+    insert into user_notify
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="read != null" >
+        read,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="notifyId != null" >
+        notify_id,
+      </if>
+
+        create_time,
+
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="read != null" >
+        #{read,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="notifyId != null" >
+        #{notifyId,jdbcType=INTEGER},
+      </if>
+     now(),
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.isleqi.graduationproject.domain.UserNotify" >
+    update user_notify
+    <set >
+      <if test="read != null" >
+        read = #{read,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="notifyId != null" >
+        notify_id = #{notifyId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.isleqi.graduationproject.domain.UserNotify" >
+    update user_notify
+    set read = #{read,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      notify_id = #{notifyId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

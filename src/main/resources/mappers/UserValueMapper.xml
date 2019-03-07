@@ -59,9 +59,14 @@
   </update>
 
 
-  <update id="updateValue" parameterType="java.lang.Integer">
+  <update id="updateValueSub" parameterType="java.lang.Integer">
     update user_value
     set value = value-#{value,jdbcType=INTEGER}
     where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="updateValueAdd" parameterType="java.lang.Integer">
+    update user_value
+    set value = value+#{value,jdbcType=INTEGER}
+    where user_id = #{useredId,jdbcType=INTEGER}
   </update>
 </mapper>

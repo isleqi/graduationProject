@@ -25,5 +25,5 @@ public interface UserOperationService {
 
     void cancelLike(Integer ansId, Integer userId);
 
-    void thanks(Integer userId,Integer value);
+    void thanks(Integer userId,Integer useredId,Integer value);
 }

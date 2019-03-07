@@ -40,6 +40,11 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public ArticleVo getArticleById(Integer articleId) {
+        return articleMapper.selectByPrimaryKey(articleId);
+    }
+
+    @Override
     public int getUserValue(Integer userId){
       return  userValueMapper.selectByPrimaryKey(userId).getValue();
     }
@@ -55,8 +60,17 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public ArticleVo getArticleById(Integer articleId) {
-        return articleMapper.selectByPrimaryKey(articleId);
+    public ArticleVo getArticleById(Integer articleId,Integer userId) {
+        ArticleVo item=articleMapper.selectByPrimaryKey(articleId);
+        Boolean data=hasFollowArticle(articleId,userId);
+        item.setHasPay(data);
+        if(userId==item.getUserId())
+            item.setMyArticle(true);
+        else
+            item.setMyArticle(false);
+        item.setHasPay(data);
+
+        return item;
     }
 
     @Override
@@ -67,6 +81,10 @@ public class ArticleServiceImpl implements ArticleService {
             list=articleMapper.selectArticleList();
             for (ArticleVo item:list) {
              Boolean data=hasFollowArticle(item.getArticleId(),userId);
+             if(userId==item.getUserId())
+                 item.setMyArticle(true);
+             else
+                 item.setMyArticle(false);
              item.setHasPay(data);
             }
         }catch (Exception e){
@@ -107,8 +125,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     @Transactional
-    public void payForArticle(Integer userId,Integer articleId, Integer value) {
-        userValueMapper.updateValue(userId, value);
+    public void payForArticle(Integer userId,Integer useredId,Integer articleId, Integer value) {
+        userValueMapper.updateValueSub(userId, value);
+        userValueMapper.updateValueAdd(useredId, value);
         UserFollowArticle userFollowArticle=new UserFollowArticle();
         userFollowArticle.setUserId(userId);
         userFollowArticle.setValue(value);

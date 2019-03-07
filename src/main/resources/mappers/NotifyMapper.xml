@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.isleqi.graduationproject.dao.mappers.NotifyMapper" >
+  <resultMap id="BaseResultMap" type="com.isleqi.graduationproject.domain.Notify" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="content" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="type" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="target_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="target_type" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="send_user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+
+  <resultMap id="BaseResultMapWithUser" type="com.isleqi.graduationproject.domain.vo.NotifyVo" >
+
+      <id column="id" property="Id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="content" property="content" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="type" property="type" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="target_id" property="targetId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="target_type" property="targetType" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="send_user_id" property="sendUserId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="create_time" property="createTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+     <association property="sendUser" column="send_user_id"
+                 select="com.isleqi.graduationproject.dao.mappers.UserMapper.selectByPrimaryKey"/>
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, content, type, target_id,target_type, send_user_id, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from notify
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByUserId" resultMap="BaseResultMapWithUser" parameterType="java.lang.Integer" >
+    select
+    content, type, target_id,target_type, send_user_id,n.create_time
+    from notify  n join user_notify u on n.id=notify_id
+    where user_id=#{userId}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from notify
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.Notify"  useGeneratedKeys="true"
+          keyProperty="id">
+    insert into notify
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="targetId != null" >
+        target_id,
+      </if>
+      <if test="targetType != null" >
+        target_type,
+      </if>
+      <if test="sendUserId != null" >
+        send_user_id,
+      </if>
+
+        create_time,
+
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="targetId != null" >
+        #{targetId,jdbcType=INTEGER},
+      </if>
+      <if test="targetType != null" >
+        #{targetType,jdbcType=INTEGER},
+      </if>
+      <if test="sendUserId != null" >
+        #{sendUserId,jdbcType=INTEGER},
+      </if>
+     now()
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.isleqi.graduationproject.domain.Notify" >
+    update notify
+    <set >
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="targetId != null" >
+        target_id = #{targetId,jdbcType=INTEGER},
+      </if>
+      <if test="sendUserId != null" >
+        send_user_id = #{sendUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.isleqi.graduationproject.domain.Notify" >
+    update notify
+    set content = #{content,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      target_id = #{targetId,jdbcType=INTEGER},
+      send_user_id = #{sendUserId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

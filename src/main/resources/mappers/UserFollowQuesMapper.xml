@@ -17,6 +17,12 @@
     from user_follow_ques
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectByQuesId"  parameterType="java.lang.Integer" resultType="java.lang.Integer" >
+    select
+     user_id
+    from user_follow_ques
+    where ques_id = #{quesId,jdbcType=INTEGER}
+  </select>
   <select id="selectByUserIdAndQusId" resultMap="BaseResultMap"  >
     select
     <include refid="Base_Column_List" />

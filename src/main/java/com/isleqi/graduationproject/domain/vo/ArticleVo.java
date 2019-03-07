@@ -33,4 +33,6 @@ public class ArticleVo {
 
     private  Boolean hasPay;
 
+    private Boolean myArticle;
+
 }

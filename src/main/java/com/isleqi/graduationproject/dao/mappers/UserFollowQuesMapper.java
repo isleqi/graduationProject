@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @Mapper
 public interface UserFollowQuesMapper {
@@ -19,6 +21,8 @@ public interface UserFollowQuesMapper {
     UserFollowQues selectByPrimaryKey(Integer id);
 
     UserFollowQues selectByUserIdAndQusId(@Param("quesId") Integer quesId,@Param("userId") Integer userId);
+
+    List<Integer> selectByQuesId(@Param("quesId") Integer quesId);
 
     int updateByPrimaryKeySelective(UserFollowQues record);
 

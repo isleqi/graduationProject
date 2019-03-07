@@ -27,7 +27,7 @@ public class ArticleCommentAndReplyServiceImpl implements ArticleCommentAndReply
     @Override
     public void addComment(ArticleComment articleComment) {
         articleCommentMapper.insertSelective(articleComment);
-        articleMapper.addCommentNum(articleComment.getId());
+        articleMapper.addCommentNum(articleComment.getArticleId());
     }
 
     @Override

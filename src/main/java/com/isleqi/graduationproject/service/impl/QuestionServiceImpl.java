@@ -172,5 +172,10 @@ public class QuestionServiceImpl implements QuestionService {
         return info;
     }
 
+    @Override
+    public List<Integer> getFollowUsersIdList(Integer quesId) {
+        return  userFollowQuesMapper.selectByQuesId(quesId);
+    }
+
 
 }

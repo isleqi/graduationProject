@@ -134,9 +134,11 @@ public class UserOperationServiceImpl implements UserOperationService {
         answerMapper.subLikeNum(ansId);
     }
 
+    @Transactional
     @Override
-    public void thanks(Integer userId,Integer value) {
-       userValueMapper.updateValue(userId,value);
+    public void thanks(Integer userId,Integer useredId,Integer value) {
+       userValueMapper.updateValueSub(userId,value);
+        userValueMapper.updateValueAdd(useredId,value);
     }
 
     @Override

@@ -4,18 +4,12 @@ package com.isleqi.graduationproject.controller;
 import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.component.common.RedisKeyPrefix;
 import com.isleqi.graduationproject.component.common.domain.Response;
-import com.isleqi.graduationproject.domain.Article;
-import com.isleqi.graduationproject.domain.ArticleComment;
-import com.isleqi.graduationproject.domain.ArticleReply;
-import com.isleqi.graduationproject.domain.User;
+import com.isleqi.graduationproject.domain.*;
 import com.isleqi.graduationproject.domain.vo.ArticleCommentVo;
 import com.isleqi.graduationproject.domain.vo.ArticleParamVo;
 import com.isleqi.graduationproject.domain.vo.ArticleReplyVo;
 import com.isleqi.graduationproject.domain.vo.ArticleVo;
-import com.isleqi.graduationproject.service.ArticleCommentAndReplyService;
-import com.isleqi.graduationproject.service.ArticleService;
-import com.isleqi.graduationproject.service.CommentAndReplyService;
-import com.isleqi.graduationproject.service.UserOperationService;
+import com.isleqi.graduationproject.service.*;
 import com.isleqi.graduationproject.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,17 +29,40 @@ public class ColumnController {
     ArticleService articleService;
     @Autowired
     ArticleCommentAndReplyService articleCommentAndReplyService;
+    @Autowired
+    NotifyService notifyService;
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public Response add(@RequestHeader("token") String token, @RequestBody ArticleParamVo articleParamVo) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
-            articleParamVo.setUserId(user.getId());
+
+            int userId=user.getId();
+            articleParamVo.setUserId(userId);
            int articleId= articleService.addArticle(articleParamVo);
-            ArticleVo articleVo = articleService.getArticleById(articleId);
+            ArticleVo articleVo = articleService.getArticleById(articleId,userId);
+
+            try{
+                Notify notify=new Notify();
+                notify.setType("发表文章");
+                notify.setSendUserId(user.getId());
+                notify.setTargetId(articleId);
+                notify.setTargetType(3);
+                notifyService.addNotifyToAllUser(notify);
+
+            }catch (Exception e){
+                e.printStackTrace();
+                logger.info("通知失败");
+            }
+
             return Response.successResponseWithData(articleVo);
 
         } catch (Exception e) {
@@ -53,6 +70,23 @@ public class ColumnController {
             return Response.errorResponse("发表专栏失败");
         }
 
+    }
+
+    @RequestMapping(value = "getArticleById", method = RequestMethod.GET)
+    public Response getArticleById(@RequestHeader("token") String token, int articleId){
+        try {
+            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+            if (user == null) {
+                return Response.errorResponse("token失效，请重新登录");
+            }
+            int userId=user.getId();
+          ArticleVo data=articleService.getArticleById(articleId,userId);
+            return Response.successResponseWithData(data);
+
+        }catch (Exception e){
+            logger.info(e.getMessage());
+            return Response.errorResponse("刷新文章失败");
+        }
     }
 
     @RequestMapping(value = "getArticleList", method = RequestMethod.GET)
@@ -74,11 +108,16 @@ public class ColumnController {
     }
     @RequestMapping(value = "comment", method = RequestMethod.POST)
     public Response comment(@RequestHeader("token") String token, String comment, Integer articleId) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("comment_token失效，请重新登录");
-            }
+
             int userId = user.getId();
             ArticleComment articleComment = new ArticleComment();
             articleComment.setArticleId(articleId);
@@ -88,6 +127,21 @@ public class ColumnController {
             Integer commentId=articleComment.getId();
 
             ArticleCommentVo data = articleCommentAndReplyService.getCommentById(commentId);
+
+            try{
+                Notify notify=new Notify();
+                notify.setType("评论");
+                notify.setSendUserId(user.getId());
+                notify.setTargetId(articleId);
+                notify.setContent(comment);
+                notify.setTargetType(3);
+                notifyService.addNotify(notify,data.getUserId());
+
+            }catch (Exception e){
+                e.printStackTrace();
+                logger.info("通知失败");
+            }
+
             return Response.successResponseWithData(data);
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,13 +153,17 @@ public class ColumnController {
 
     @RequestMapping(value = "comment/reply", method = RequestMethod.POST)
     public Response reply(@RequestHeader("token") String token, String comtent, Integer commentId, Integer replyedUserId) {
-        try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("reply_token失效，请重新登录");
-            }
-            int userId = user.getId();
 
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+        try {
+
+            int userId = user.getId();
             ArticleReply articleReply = new ArticleReply();
             articleReply.setArticleCommentId(commentId);
             articleReply.setReplyComtent(comtent);
@@ -113,6 +171,19 @@ public class ColumnController {
             articleReply.setReplyUserId(userId);
             articleCommentAndReplyService.addReply(articleReply);
             ArticleReplyVo data = articleCommentAndReplyService.getReplyById(articleReply.getId());
+            try{
+                Notify notify=new Notify();
+                notify.setType("回复");
+                notify.setSendUserId(user.getId());
+                notify.setTargetId(commentId);
+                notify.setContent(comtent);
+                notify.setTargetType(4);
+                notifyService.addNotify(notify,replyedUserId);
+
+            }catch (Exception e){
+                e.printStackTrace();
+                logger.info("通知失败");
+            }
             return Response.successResponseWithData(data);
         } catch (Exception e) {
             e.printStackTrace();
@@ -167,17 +238,34 @@ public class ColumnController {
     }
 
     @RequestMapping(value = "payForArticle",method = RequestMethod.GET)
-    public Response payForArticle(@RequestHeader("token") String token,Integer articleId,Integer value){
+    public Response payForArticle(@RequestHeader("token") String token,Integer articleId){
         try{
             User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
             if(user==null){
                 return Response.errorResponse("token失效，请重新登录");
             }
             int userId=user.getId();
+            ArticleVo data = articleService.getArticleById(articleId);
             int userValue=articleService.getUserValue(userId);
+            int value=data.getValue();
             if(userValue<value)
                 return Response.errorResponse("积分不足");
-            articleService.payForArticle(userId,articleId,value);
+
+            int useredId= data.getUserId();
+            articleService.payForArticle(userId,useredId,articleId,value);
+            try{
+                Notify notify=new Notify();
+                notify.setType("付费");
+                notify.setSendUserId(user.getId());
+                notify.setTargetId(articleId);
+                notify.setTargetType(3);
+
+                notifyService.addNotify(notify,useredId);
+
+            }catch (Exception e){
+                e.printStackTrace();
+                logger.info("通知失败");
+            }
             return Response.successResponse();
         }catch (Exception e){
             e.printStackTrace();

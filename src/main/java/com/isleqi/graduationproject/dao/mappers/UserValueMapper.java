@@ -20,5 +20,7 @@ public interface UserValueMapper {
 
     int updateByPrimaryKey(UserValue record);
 
-    int updateValue(@Param("userId") Integer userId,@Param("value") Integer value);
+    int updateValueSub(@Param("userId") Integer userId,@Param("value") Integer value);
+
+    int updateValueAdd(@Param("useredId") Integer userId,@Param("value") Integer value);
 }

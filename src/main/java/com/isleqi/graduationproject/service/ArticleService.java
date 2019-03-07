@@ -10,6 +10,8 @@ public interface ArticleService {
 
     ArticleVo getArticleById(Integer articleId);
 
+    ArticleVo getArticleById(Integer articleId,Integer userId);
+
     PageBean<ArticleVo> getArticleList(int userId,int pageNum, int pageSize);
 
     PageBean<ArticleVo> getFollowUserArticleList(int pageNum,int pageSize,Integer userId);
@@ -18,7 +20,7 @@ public interface ArticleService {
 
     void updateArticle(String content,Integer articleId);
 
-    void payForArticle(Integer userId,Integer articleId, Integer value);
+    void payForArticle(Integer userId,Integer useredId,Integer articleId, Integer value);
 
     public int getUserValue(Integer userId);
 }

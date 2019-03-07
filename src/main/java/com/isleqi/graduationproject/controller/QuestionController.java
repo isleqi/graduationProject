@@ -9,12 +9,14 @@ import com.isleqi.graduationproject.component.common.domain.Response;
 import com.isleqi.graduationproject.dao.mappers.QuestionMapper;
 import com.isleqi.graduationproject.dao.mappers.TagMapMapper;
 import com.isleqi.graduationproject.dao.mappers.TagMapper;
+import com.isleqi.graduationproject.domain.Notify;
 import com.isleqi.graduationproject.domain.Question;
 import com.isleqi.graduationproject.domain.Tag;
 import com.isleqi.graduationproject.domain.User;
 import com.isleqi.graduationproject.domain.vo.QuestionParamVo;
 import com.isleqi.graduationproject.domain.vo.QuestionVo;
 import com.isleqi.graduationproject.domain.vo.TagMapVo;
+import com.isleqi.graduationproject.service.NotifyService;
 import com.isleqi.graduationproject.service.QuestionService;
 import com.isleqi.graduationproject.service.UserOperationService;
 import com.isleqi.graduationproject.util.RedisUtil;
@@ -44,6 +46,8 @@ public class QuestionController {
     QuestionService questionService;
     @Autowired
     UserOperationService userOperationService;
+    @Autowired
+    NotifyService notifyService;
 
 
     @RequestMapping(value = "add",method = RequestMethod.POST)
@@ -237,6 +241,32 @@ public class QuestionController {
             return Response.successResponseWithData(tags);
         } catch (Exception e) {
             return Response.errorResponse("获取热门标签类表失败");
+        }
+
+
+    }
+
+    @RequestMapping(value = "invitation",method = RequestMethod.GET)
+    public Response invitation(@RequestHeader("token") String token,@RequestParam(value = "userIds[]") Integer[] userIds ) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+        try {
+           for(int i=0;i<userIds.length;i++){
+               Notify notify=new Notify();
+               notify.setType("邀请");
+               notify.setSendUserId(user.getId());
+               notify.setTargetId(userIds[i]);
+               notify.setTargetType(6);
+               notifyService.addNotify(notify,userIds[i]);
+           }
+            return Response.successResponse();
+        } catch (Exception e) {
+            return Response.errorResponse("邀请失败");
         }
 
 
