@@ -14,6 +14,8 @@ public interface ArticleService {
 
     PageBean<ArticleVo> getArticleList(int userId,int pageNum, int pageSize);
 
+    PageBean<ArticleVo> getListBySearch(int pageNum,int pageSize,String str);
+
     PageBean<ArticleVo> getFollowUserArticleList(int pageNum,int pageSize,Integer userId);
 
     int delArticle(Integer articleId);

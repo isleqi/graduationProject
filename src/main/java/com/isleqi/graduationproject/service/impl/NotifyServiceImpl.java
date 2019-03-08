@@ -6,6 +6,7 @@ import com.isleqi.graduationproject.dao.mappers.*;
 import com.isleqi.graduationproject.domain.Notify;
 import com.isleqi.graduationproject.domain.UserNotify;
 import com.isleqi.graduationproject.domain.vo.NotifyVo;
+import com.isleqi.graduationproject.service.ArticleService;
 import com.isleqi.graduationproject.service.NotifyService;
 import com.isleqi.graduationproject.service.QuestionService;
 import com.isleqi.graduationproject.service.UserService;
@@ -39,6 +40,12 @@ public class NotifyServiceImpl implements NotifyService {
     ArticleReplyMapper articleReplyMapper;
     @Autowired
     AnsReplyMapper ansReplyMapper;
+    @Autowired
+    ArticleService articleService;
+    @Autowired
+    AnsCommentMapper ansCommentMapper;
+    @Autowired
+    ArticleCommentMapper articleCommentMapper;
 
 
     @Transactional
@@ -91,7 +98,7 @@ public class NotifyServiceImpl implements NotifyService {
         try {
             list = notifyMapper.selectByUserId(userId);
             for (NotifyVo item : list) {
-                Object target=getTarget(item.getTargetType(), item.getTargetId());
+                Object target=getTarget(item.getTargetType(), item.getTargetId(),userId);
                 item.setTarget(target);
             }
         } catch (Exception e) {
@@ -104,20 +111,18 @@ public class NotifyServiceImpl implements NotifyService {
         return info;
     }
 
-    public Object getTarget(Integer type, Integer targetId) {
+    public Object getTarget(Integer type, Integer targetId,Integer userId) {
         switch (type) {
             case 1:
                 return answerMapper.selectAnswer(targetId);
             case 2:
                 return questionMapper.selectByPrimaryKey(targetId);
             case 3:
-                return articleMapper.selectByPrimaryKey(targetId);
+                return articleService.getArticleById(targetId);
             case 4:
-                return articleReplyMapper.selectListByCommentId(targetId);
+                return ansCommentMapper.selectByPrimaryKey(targetId);
             case 5:
-                return ansReplyMapper.selectListByCommentId(targetId);
-            case 6:
-                return userMapper.selectByPrimaryKey(targetId);
+                return articleCommentMapper.selectByPrimaryKey(targetId);
 
 
         }

@@ -247,7 +247,7 @@ public class QuestionController {
     }
 
     @RequestMapping(value = "invitation",method = RequestMethod.GET)
-    public Response invitation(@RequestHeader("token") String token,@RequestParam(value = "userIds[]") Integer[] userIds ) {
+    public Response invitation(@RequestHeader("token") String token,@RequestParam(value = "userIds[]") Integer[] userIds,@RequestParam(value = "quesId") Integer quesId) {
         Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
         User user;
         if(info instanceof User){
@@ -260,8 +260,8 @@ public class QuestionController {
                Notify notify=new Notify();
                notify.setType("邀请");
                notify.setSendUserId(user.getId());
-               notify.setTargetId(userIds[i]);
-               notify.setTargetType(6);
+               notify.setTargetId(quesId);
+               notify.setTargetType(2);
                notifyService.addNotify(notify,userIds[i]);
            }
             return Response.successResponse();
@@ -270,6 +270,17 @@ public class QuestionController {
         }
 
 
+    }
+
+    @RequestMapping(value = "search",method = RequestMethod.POST)
+    public Response search(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("str") String str){
+        try{
+            PageBean<QuestionVo> data = questionService.getListBySearch(pageNum,pageSize,str);
+            return Response.successResponseWithData(data);
+        }catch (Exception e){
+            e.printStackTrace();
+            return  Response.errorResponse("获取搜索结果失败");
+        }
     }
 
 }

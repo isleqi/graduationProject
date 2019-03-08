@@ -5,7 +5,7 @@ import java.util.Date;
 public class UserNotify {
     private Integer id;
 
-    private Integer read;
+    private Integer hasRead;
 
     private Integer userId;
 
@@ -13,9 +13,9 @@ public class UserNotify {
 
     private Date createTime;
 
-    public UserNotify(Integer id, Integer read, Integer userId, Integer notifyId, Date createTime) {
+    public UserNotify(Integer id, Integer hasRead, Integer userId, Integer notifyId, Date createTime) {
         this.id = id;
-        this.read = read;
+        this.hasRead = hasRead;
         this.userId = userId;
         this.notifyId = notifyId;
         this.createTime = createTime;
@@ -33,12 +33,12 @@ public class UserNotify {
         this.id = id;
     }
 
-    public Integer getRead() {
-        return read;
+    public Integer gethasRead() {
+        return hasRead;
     }
 
-    public void setRead(Integer read) {
-        this.read = read;
+    public void sethasRead(Integer hasRead) {
+        this.hasRead = hasRead;
     }
 
     public Integer getUserId() {

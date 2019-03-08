@@ -44,6 +44,12 @@
         from question
     </select>
 
+    <select id="selectListByStr" resultMap="ResultMapWithAns">
+        select id,ques_title,ques_des,follow_num,answer_num
+        from question
+        where ques_title like CONCAT(CONCAT('%',#{str}),'%')
+    </select>
+
     <select id="selectFollowQuesWithAns" resultMap="ResultMapWithAns">
        select id,ques_title,ques_des,follow_num,answer_num
         from question where id in(select ques_id from user_follow_ques where user_id=#{userId})

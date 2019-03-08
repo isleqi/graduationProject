@@ -128,14 +128,16 @@ public class ColumnController {
 
             ArticleCommentVo data = articleCommentAndReplyService.getCommentById(commentId);
 
+            ArticleVo article=articleService.getArticleById(articleId);
+
             try{
                 Notify notify=new Notify();
                 notify.setType("评论");
                 notify.setSendUserId(user.getId());
-                notify.setTargetId(articleId);
+                notify.setTargetId(commentId);
                 notify.setContent(comment);
-                notify.setTargetType(3);
-                notifyService.addNotify(notify,data.getUserId());
+                notify.setTargetType(5);
+                notifyService.addNotify(notify,article.getUserId());
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -177,7 +179,7 @@ public class ColumnController {
                 notify.setSendUserId(user.getId());
                 notify.setTargetId(commentId);
                 notify.setContent(comtent);
-                notify.setTargetType(4);
+                notify.setTargetType(5);
                 notifyService.addNotify(notify,replyedUserId);
 
             }catch (Exception e){
@@ -273,7 +275,16 @@ public class ColumnController {
         }
     }
 
-
+    @RequestMapping(value = "search",method = RequestMethod.POST)
+    public Response search(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("str") String str){
+        try{
+            PageBean<ArticleVo> data = articleService.getListBySearch(pageNum,pageSize,str);
+            return Response.successResponseWithData(data);
+        }catch (Exception e){
+            e.printStackTrace();
+            return  Response.errorResponse("获取搜索结果失败");
+        }
+    }
 
 
 }

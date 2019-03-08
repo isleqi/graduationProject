@@ -90,6 +90,22 @@ public class AnswerServiceImpl implements AnswerService {
         return info;
     }
 
+    @Override
+    public PageBean<AnswerVo> getListBySearch(int pageNum, int pageSize, String str) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<AnswerVo> list=null;
+        try{
+            list=answerMapper.selectListByStr(str);
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            PageHelper.clearPage();
+        }
+        PageBean<AnswerVo> info = new PageBean<>(list);
+
+        return info;
+    }
+
 
     @Override
     @Transactional

@@ -15,13 +15,14 @@
 
   <resultMap id="BaseResultMapWithUser" type="com.isleqi.graduationproject.domain.vo.NotifyVo" >
 
-      <id column="id" property="Id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <id column="id" property="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <result column="content" property="content" jdbcType="VARCHAR" javaType="java.lang.String" />
       <result column="type" property="type" jdbcType="VARCHAR" javaType="java.lang.String" />
       <result column="target_id" property="targetId" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <result column="target_type" property="targetType" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <result column="send_user_id" property="sendUserId" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <result column="create_time" property="createTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    <result column="has_read" property="hasRead" jdbcType="INTEGER" javaType="java.lang.Integer" />
      <association property="sendUser" column="send_user_id"
                  select="com.isleqi.graduationproject.dao.mappers.UserMapper.selectByPrimaryKey"/>
   </resultMap>
@@ -37,9 +38,9 @@
   </select>
   <select id="selectByUserId" resultMap="BaseResultMapWithUser" parameterType="java.lang.Integer" >
     select
-    content, type, target_id,target_type, send_user_id,n.create_time
+   n.id, content, type, target_id,target_type, send_user_id,n.create_time,has_read
     from notify  n join user_notify u on n.id=notify_id
-    where user_id=#{userId}
+    where user_id=#{userId} ORDER by n.create_time desc
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from notify

@@ -66,6 +66,10 @@
     from answer
     where ans_id = #{ansId,jdbcType=INTEGER}
   </select>
+
+
+
+
   <select id="selectByQuesId" resultMap="ResultMapWithUser" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List" />

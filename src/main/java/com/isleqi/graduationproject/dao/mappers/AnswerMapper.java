@@ -26,6 +26,8 @@ public interface AnswerMapper {
 
     List<AnswerVo> selectListByQuesId(Integer quesId);
 
+    List<AnswerVo> selectListByStr(String str);
+
     List<AnswerVo> selectFollowList(Integer userId);
 
     int updateByPrimaryKeySelective(Answer record);

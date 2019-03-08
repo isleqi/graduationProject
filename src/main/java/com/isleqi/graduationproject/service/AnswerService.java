@@ -22,6 +22,9 @@ public interface AnswerService {
 
     PageBean<AnswerVo> getFollowList(int pageNum,int pageSize,Integer userId);
 
+    PageBean<AnswerVo> getListBySearch(int pageNum,int pageSize,String str);
+
+
     int addAnswer(AnswerParamVo answerParamVo);
 
     int delAnswer(Integer ansId,Integer quesId);

@@ -98,6 +98,22 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public PageBean<ArticleVo> getListBySearch(int pageNum, int pageSize, String str) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<ArticleVo> list=null;
+        try{
+            list=articleMapper.selectListByStr(str);
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            PageHelper.clearPage();
+        }
+        PageBean<ArticleVo> info = new PageBean<>(list);
+
+        return info;
+    }
+
+    @Override
     public PageBean<ArticleVo> getFollowUserArticleList(int pageNum, int pageSize, Integer userId) {
         PageHelper.startPage(pageNum, pageSize);
         List<ArticleVo> list=null;

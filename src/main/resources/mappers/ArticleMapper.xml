@@ -62,6 +62,14 @@
         from article
         where article_id = #{articleId,jdbcType=INTEGER}
     </select>
+    <select id="selectListByStr" resultMap="ResultMapWithUser">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from article
+        where article_title like CONCAT(CONCAT('%',#{str}),'%')
+    </select>
     <select id="selectArticleList" resultMap="ResultMapWithUser">
         select
         <include refid="Base_Column_List"/>

@@ -7,6 +7,7 @@ import java.util.Date;
 
 @Data
 public class NotifyVo {
+    private Integer id;
     private User sendUser;
     private String content;
     private String type;
@@ -15,4 +16,5 @@ public class NotifyVo {
     private Integer sendUserId;
     private Object target;
     private Date createTime;
+    private Integer hasRead;
 }

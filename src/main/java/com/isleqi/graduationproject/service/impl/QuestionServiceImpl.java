@@ -114,8 +114,19 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public PageBean<QuestionVo> getBySearch(int pageNum, int pageSize, String str) {
-        return null;
+    public PageBean<QuestionVo> getListBySearch(int pageNum, int pageSize, String str) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<QuestionVo> list=null;
+        try{
+            list=questionMapper.selectListByStr(str);
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            PageHelper.clearPage();
+        }
+        PageBean<QuestionVo> info = new PageBean<>(list);
+
+        return info;
     }
 
     @Override

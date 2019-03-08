@@ -26,6 +26,8 @@ public interface QuestionMapper {
 
     List<QuestionVo> selectQuesWithAns();
 
+    List<QuestionVo> selectListByStr(String str);
+
     List<QuestionVo> selectFollowQuesWithAns(Integer userId);
 
     int updateByPrimaryKeySelective(Question record);

@@ -2,6 +2,7 @@ package com.isleqi.graduationproject.dao.mappers;
 
 import com.isleqi.graduationproject.domain.UserNotify;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,4 +19,9 @@ public interface UserNotifyMapper {
     int updateByPrimaryKeySelective(UserNotify record);
 
     int updateByPrimaryKey(UserNotify record);
+
+    void hadRead(@Param("userId") Integer userId,@Param("notifyId") Integer notifyId);
+
+    void hadReadAll(@Param("userId") Integer userId);
+
 }

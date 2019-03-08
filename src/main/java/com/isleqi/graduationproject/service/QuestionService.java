@@ -23,7 +23,7 @@ public interface QuestionService {
 
     PageBean<QuestionVo> getByUserId(int pageNum,int pageSize,int userId);
 
-    PageBean<QuestionVo> getBySearch(int pageNum,int pageSize,String str);
+    PageBean<QuestionVo> getListBySearch(int pageNum,int pageSize,String str);
 
     PageBean<QuestionVo> getQuestionList(int pageNum, int pageSize);
 

@@ -275,17 +275,19 @@ public class AnswerController {
             ansComment.setCommentContent(comment);
             ansCommentAndReplyService.addComment(ansComment);
              Integer commentId=ansComment.getId();
-             logger.info("commentId:"+commentId);
+
             AnsCommentVo data = ansCommentAndReplyService.getCommentById(commentId);
+
+            AnswerVo answer=answerService.getByAnsId(ansId);
 
             try{
                 Notify notify=new Notify();
                 notify.setType("评论");
                 notify.setSendUserId(user.getId());
-                notify.setTargetId(ansId);
+                notify.setTargetId(commentId);
                 notify.setContent(comment);
-                notify.setTargetType(1);
-                notifyService.addNotify(notify,data.getUserId());
+                notify.setTargetType(4);
+                notifyService.addNotify(notify,answer.getUserId());
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -323,7 +325,7 @@ public class AnswerController {
                 notify.setSendUserId(user.getId());
                 notify.setTargetId(commentId);
                 notify.setContent(comtent);
-                notify.setTargetType(5);
+                notify.setTargetType(4);
                 notifyService.addNotify(notify,replyedUserId);
 
             }catch (Exception e){
@@ -365,6 +367,18 @@ public class AnswerController {
             return Response.errorResponse("获取回复列表失败");
         }
     }
+
+    @RequestMapping(value = "search",method = RequestMethod.POST)
+    public Response search(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("str") String str){
+        try{
+            PageBean<AnswerVo> data = answerService.getListBySearch(pageNum,pageSize,str);
+            return Response.successResponseWithData(data);
+        }catch (Exception e){
+            e.printStackTrace();
+            return  Response.errorResponse("获取搜索结果失败");
+        }
+    }
+
 
 
 
