@@ -20,9 +20,11 @@ public interface QuestionMapper {
 
     Question selectBystr(String str);
 
+    QuestionVo  selectByQuesId(Integer id);
+
     List<QuestionVo> selectByTagId(Integer tagId);
 
-    List<QuestionVo> selectByUserId(Integer tagId);
+    List<QuestionVo> selectByUserId(Integer userId);
 
     List<QuestionVo> selectQuesWithAns();
 

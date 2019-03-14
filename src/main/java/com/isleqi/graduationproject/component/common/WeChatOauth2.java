@@ -3,6 +3,7 @@ package com.isleqi.graduationproject.component.common;
 import com.isleqi.graduationproject.util.HttpClientUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,9 +11,12 @@ import java.util.Map;
 public class WeChatOauth2 {
     private final static Logger logger = LoggerFactory.getLogger(SinaOauth2.class);
 
+    @Value("${web.url}")
+    static String url;
+
     static String appKey = "wxcc202534aa5de560";
     static String appSecret = "38ff207e40f48135dcd084199331e02d";
-    static String redirect_URI = "http://127.0.0.1:8070/app/login/wechatOauth";
+    static String redirect_URI = url+"/app/login/wechatOauth";
 
 
     public static String getAccessToken(String code) {

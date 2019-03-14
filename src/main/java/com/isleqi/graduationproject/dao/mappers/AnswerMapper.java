@@ -30,6 +30,10 @@ public interface AnswerMapper {
 
     List<AnswerVo> selectFollowList(Integer userId);
 
+    List<AnswerVo> selectList();
+
+    List <AnswerVo> selectListByFollowQuesId(Integer userId);
+
     int updateByPrimaryKeySelective(Answer record);
 
     int updateByPrimaryKeyWithBLOBs(Answer record);

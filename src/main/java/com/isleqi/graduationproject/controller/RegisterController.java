@@ -52,9 +52,14 @@ public class RegisterController {
         String account=map.get("account");                  //获取账号
         String identityType=map.get("identityType");      //获取注册类型（手机号还是邮箱）
         String userName=map.get("userName");                //获取用户名称
+        String avatarPath=map.get("avatarPath");                //获取用户头像地址
+        String description=map.get("description");
         String credential=map.get("password");            //获取密码
 
         user.setUserName(userName);
+        user.setUserIconUrl(avatarPath);
+        user.setUserDes(description);
+
 
         userAuth.setIdentityType(identityType);
         userAuth.setIdentifier(account);
@@ -83,7 +88,7 @@ public class RegisterController {
 
 
 
-        redisUtil.set(RedisKeyPrefix.USER_TOKEN+token,user);
+        redisUtil.set(RedisKeyPrefix.USER_TOKEN+token,user,Constant.JWT_TTL);
 
 
         return Response.successResponseWithData(token);

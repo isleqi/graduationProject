@@ -4,8 +4,11 @@ import com.github.pagehelper.PageHelper;
 import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.dao.mappers.*;
 import com.isleqi.graduationproject.domain.Notify;
+import com.isleqi.graduationproject.domain.Tag;
 import com.isleqi.graduationproject.domain.UserNotify;
 import com.isleqi.graduationproject.domain.vo.NotifyVo;
+import com.isleqi.graduationproject.domain.vo.QuestionVo;
+import com.isleqi.graduationproject.domain.vo.TagMapVo;
 import com.isleqi.graduationproject.service.ArticleService;
 import com.isleqi.graduationproject.service.NotifyService;
 import com.isleqi.graduationproject.service.QuestionService;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.activation.CommandMap;
+import java.util.ArrayList;
 import java.util.List;
 
 @Transactional
@@ -46,6 +50,8 @@ public class NotifyServiceImpl implements NotifyService {
     AnsCommentMapper ansCommentMapper;
     @Autowired
     ArticleCommentMapper articleCommentMapper;
+    @Autowired
+    TagMapMapper tagMapMapper;
 
 
     @Transactional
@@ -123,6 +129,15 @@ public class NotifyServiceImpl implements NotifyService {
                 return ansCommentMapper.selectByPrimaryKey(targetId);
             case 5:
                 return articleCommentMapper.selectByPrimaryKey(targetId);
+            case 6:
+                QuestionVo data=questionMapper.selectByQuesId(targetId);
+                List<TagMapVo> tagMapVos=tagMapMapper.selectAllTagByQuesId(data.getId());
+                List<Tag> tags=new ArrayList<>();
+                for(TagMapVo vo:tagMapVos){
+                    tags.add(vo.getTag());
+                }
+                data.setTagList(tags);
+                return data;
 
 
         }

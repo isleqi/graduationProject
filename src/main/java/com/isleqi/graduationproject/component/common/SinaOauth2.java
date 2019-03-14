@@ -3,6 +3,7 @@ package com.isleqi.graduationproject.component.common;
 import com.isleqi.graduationproject.util.HttpClientUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,9 +11,12 @@ import java.util.Map;
 public class SinaOauth2 {
     private final static Logger logger = LoggerFactory.getLogger(SinaOauth2.class);
 
+    @Value("${web.url}")
+    static String url;
+
     static String appKey = "524337518";
     static String appSecret = "bd5dc471062ac73d09fd1ba7d7129441";
-    static String redirect_URI = "http://192.168.1.6:8070/app/login/sinaOauth";
+    static String redirect_URI = url+"/app/login/sinaOauth";
 
 
     public static String getAccessToken(String code) {

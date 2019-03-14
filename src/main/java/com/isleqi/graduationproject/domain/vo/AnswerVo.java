@@ -1,10 +1,12 @@
 package com.isleqi.graduationproject.domain.vo;
 
 import com.isleqi.graduationproject.domain.Question;
+import com.isleqi.graduationproject.domain.Tag;
 import com.isleqi.graduationproject.domain.User;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class AnswerVo {
@@ -27,5 +29,7 @@ public class AnswerVo {
     private User user;
 
     private Question ques;
+
+    private List<Tag> tagList;
 
 }

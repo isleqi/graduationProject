@@ -98,11 +98,36 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public PageBean<ArticleVo> getListBySearch(int pageNum, int pageSize, String str) {
+    public PageBean<ArticleVo> getMyArticleList(int userId, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<ArticleVo> list=null;
+        try{
+            list=articleMapper.selectMyArticleList(userId);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            PageHelper.clearPage();
+        }
+        PageBean<ArticleVo> info = new PageBean<>(list);
+
+        return info;
+    }
+
+    @Override
+    public PageBean<ArticleVo> getListBySearch(int pageNum, int pageSize, String str,Integer userId) {
         PageHelper.startPage(pageNum, pageSize);
         List<ArticleVo> list=null;
         try{
             list=articleMapper.selectListByStr(str);
+            for (ArticleVo item:list) {
+                Boolean data=hasFollowArticle(item.getArticleId(),userId);
+                if(userId==item.getUserId())
+                    item.setMyArticle(true);
+                else
+                    item.setMyArticle(false);
+                item.setHasPay(data);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }finally {
@@ -119,6 +144,14 @@ public class ArticleServiceImpl implements ArticleService {
         List<ArticleVo> list=null;
         try{
             list=articleMapper.selectFollowUserArticle(userId);
+            for (ArticleVo item:list) {
+                Boolean data=hasFollowArticle(item.getArticleId(),userId);
+                if(userId==item.getUserId())
+                    item.setMyArticle(true);
+                else
+                    item.setMyArticle(false);
+                item.setHasPay(data);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }finally {

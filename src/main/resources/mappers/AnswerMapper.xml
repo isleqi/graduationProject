@@ -68,7 +68,14 @@
   </select>
 
 
-
+  <select id="selectList" resultMap="ResultMapWithUserAndQues" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from answer
+   ORDER By creat_time desc
+  </select>
 
   <select id="selectByQuesId" resultMap="ResultMapWithUser" parameterType="java.lang.Integer" >
     select
@@ -85,7 +92,7 @@
     ,
     <include refid="Blob_Column_List" />
     from answer
-    where ques_id = #{quesId,jdbcType=INTEGER}
+    where ques_id = #{quesId,jdbcType=INTEGER} ORDER By like_num desc
   </select>
 
   <select id="selectListByUserId" resultMap="ResultMapWithUserAndQues" parameterType="java.lang.Integer" >
@@ -95,6 +102,15 @@
     <include refid="Blob_Column_List" />
     from answer
     where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectListByFollowQuesId" resultMap="ResultMapWithUserAndQues" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from answer
+    where ques_id in(select ques_id from user_follow_ques where user_id=#{userId}) ORDER BY creat_time desc
   </select>
 
   <select id="selectFollowList" resultMap="ResultMapWithUserAndQues" parameterType="java.lang.Integer" >

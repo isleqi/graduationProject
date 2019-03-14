@@ -18,5 +18,4 @@ public interface UserPayMapper {
     int updateByPrimaryKeySelective(UserPay record);
 
     int updateByPrimaryKey(UserPay record);
-
 }

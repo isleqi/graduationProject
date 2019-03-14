@@ -13,14 +13,8 @@ import com.isleqi.graduationproject.domain.User;
 import com.isleqi.graduationproject.domain.UserAuth;
 import com.isleqi.graduationproject.domain.UserPay;
 import com.isleqi.graduationproject.domain.UserValue;
-import com.isleqi.graduationproject.domain.vo.AnswerVo;
-import com.isleqi.graduationproject.domain.vo.QuestionVo;
-import com.isleqi.graduationproject.domain.vo.UserInfoVo;
-import com.isleqi.graduationproject.domain.vo.UserRelationVo;
-import com.isleqi.graduationproject.service.AnswerService;
-import com.isleqi.graduationproject.service.QuestionService;
-import com.isleqi.graduationproject.service.UserOperationService;
-import com.isleqi.graduationproject.service.UserService;
+import com.isleqi.graduationproject.domain.vo.*;
+import com.isleqi.graduationproject.service.*;
 import com.isleqi.graduationproject.util.FileUtil;
 import com.isleqi.graduationproject.util.JWTUtil;
 import com.isleqi.graduationproject.util.RedisUtil;
@@ -62,6 +56,8 @@ public class UserController {
     UserValueMapper userValueMapper;
     @Autowired
     UserPayMapper userPayMapper;
+    @Autowired
+    ArticleService articleService;
 
 
     @Autowired
@@ -80,23 +76,35 @@ public class UserController {
     @Value("${web.image_path}")
     private String imagePath;
 
-    @RequestMapping(value = "uploadAvatar", method = RequestMethod.POST)
-    public Response uploadAvatar(@RequestParam("file") MultipartFile file) {
+    @RequestMapping(value = "updateUserInfo", method = RequestMethod.POST)
+    public Response updateUserInfo(@RequestHeader("token") String token,
+                                 @RequestParam(value = "des", required = false) String des,
+                                 @RequestParam(value = "avatarPath", required = false) String avatarPath) {
         try {
-            String fileName = FileUtil.saveImg(file, localAvatarPath);
-            String path = avatarPath + fileName;
-            return Response.successResponseWithData(path);
+            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+            if (user == null) {
+                return Response.errorResponse("token失效，请重新登录");
+            }
+
+            if(des!=null)
+                user.setUserDes(des);
+            if(avatarPath!=null)
+                user.setUserIconUrl(avatarPath);
+
+            userService.updateUser(user);
+
+            return Response.successResponseWithData(user);
 
         } catch (Exception e) {
             e.printStackTrace();
-            logger.info("上传头像失败");
-            return Response.errorResponse("上传头像失败");
+            logger.info("更新用户信息失败");
+            return Response.errorResponse("更新用户信息失败");
         }
 
     }
 
     @RequestMapping(value = "uploadImage", method = RequestMethod.POST)
-    public Response uploadAvatar(@RequestParam("files") MultipartFile[] files) {
+    public Response uploadImage(@RequestParam("files") MultipartFile[] files) {
         List<String> paths = new ArrayList<>();
         try {
             for (MultipartFile file : files) {
@@ -115,12 +123,31 @@ public class UserController {
 
     }
 
+    @RequestMapping(value = "uploadAvatar", method = RequestMethod.POST)
+    public Response uploadAvatar(
+            @RequestParam("file") MultipartFile file) {
+        try {
+
+
+                String fileName = FileUtil.saveImg(file, localAvatarPath);
+                String path = avatarPath + fileName;
+
+            return Response.successResponseWithData(path);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("上传头像失败");
+            return Response.errorResponse("上传头像失败");
+        }
+
+    }
+
     @RequestMapping(value = "getBaseUserInfo", method = RequestMethod.POST)
     public Response getBaseUserInfo(String token) {
         logger.info(token);
         // String token_=JSONObject.parseObject(token).getString("token");
         User data = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-        System.out.println((data.getId() + "!!!!!!"));
+//        System.out.println((data.getId() + "!!!!!!"));
         if (data == null || "".equals(data)) {
             JSONObject msg = new JSONObject();
             msg.put("code", 403);
@@ -136,7 +163,7 @@ public class UserController {
             List<Integer> fanIds = userService.getFanIds(userId);
 
             //将关注列表放进redis中
-            redisUtil.set(RedisKeyPrefix.GET_FOLLOWUSERIDS + token, followIds);
+            redisUtil.set(RedisKeyPrefix.GET_FOLLOWUSERIDS + token, followIds, Constant.JWT_TTL);
 
             int followsNum = followIds.size();
             int fansNum = fanIds.size();
@@ -147,10 +174,6 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "updateUserInfo", method = RequestMethod.GET)
-    public Response updateUserInfo(@RequestParam String userName, @RequestParam String userDes, @RequestParam String userIconUrl) {
-        return null;
-    }
 
     @RequestMapping(value = "follow", method = RequestMethod.GET)
     public Response followUser(@RequestHeader("token") String token, @RequestParam("useredId") Integer useredId) {
@@ -236,7 +259,7 @@ public class UserController {
                 return Response.errorResponse("token失效，请重新登录");
             }
             int userId = user.getId();
-            PageBean<QuestionVo> data = questionService.getFollowQuestionList(userId, pageNum, pageSize);
+            PageBean<AnswerVo> data = questionService.getFollowQuestionList(userId, pageNum, pageSize);
 
             return Response.successResponseWithData(data);
 
@@ -265,6 +288,26 @@ public class UserController {
             return Response.errorResponse("获取我的回答失败");
         }
     }
+
+    @RequestMapping(value = "getMyArticle", method = RequestMethod.GET)
+    public Response getMyArticle(@RequestHeader("token") String token, @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
+        try {
+            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+            if (user == null) {
+                return Response.errorResponse("token失效，请重新登录");
+            }
+            int userId = user.getId();
+            PageBean<ArticleVo> data = articleService.getMyArticleList(userId, pageNum, pageSize);
+
+            return Response.successResponseWithData(data);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("获取我的专栏失败");
+            return Response.errorResponse("获取我的专栏失败");
+        }
+    }
+
 
     @RequestMapping(value = "getMyQuestion", method = RequestMethod.GET)
     public Response getMyQuestion(@RequestHeader("token") String token, @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
@@ -324,50 +367,47 @@ public class UserController {
     }
 
     @RequestMapping(value = "getMyValue", method = RequestMethod.GET)
-    public Response getMyValue(@RequestHeader("token") String token){
-        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+    public Response getMyValue(@RequestHeader("token") String token) {
+        Object info = redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
         User user;
 
-        if(info instanceof User){
-            user=(User)info;
-        }else {
+        if (info instanceof User) {
+            user = (User) info;
+        } else {
             return Response.errorResponse("token失效，请重新登录");
         }
-        try{
-            int userId=user.getId();
-            UserValue data=userValueMapper.selectByPrimaryKey(userId);
+        try {
+            int userId = user.getId();
+            UserValue data = userValueMapper.selectByPrimaryKey(userId);
             return Response.successResponseWithData(data);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return Response.errorResponse("获取积分失败");
         }
     }
 
     @RequestMapping(value = "payForValue", method = RequestMethod.POST)
-    public Response payForValue(@RequestHeader("token") String token,@RequestParam("price") Integer price,@RequestParam("orderId") String orderId){
-        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+    public Response payForValue(@RequestHeader("token") String token, @RequestParam("price") Integer price, @RequestParam("orderId") String orderId) {
+        Object info = redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
         User user;
 
-        if(info instanceof User){
-            user=(User)info;
-        }else {
+        if (info instanceof User) {
+            user = (User) info;
+        } else {
             return Response.errorResponse("token失效，请重新登录");
         }
-        try{
-            int userId=user.getId();
-            UserPay userPay=new UserPay();
+        try {
+            int userId = user.getId();
+            UserPay userPay = new UserPay();
             userPay.setUserId(userId);
             userPay.setOrderId(orderId);
             userPay.setPrice(price);
             userPayMapper.insertSelective(userPay);
             return Response.successResponse();
-        }catch (Exception e){
+        } catch (Exception e) {
             return Response.errorResponse("创建订单失败");
         }
     }
-
-
-
 
 
     @RequestMapping(value = "paySuccess", method = RequestMethod.POST)
@@ -379,18 +419,18 @@ public class UserController {
             @RequestParam("payPrice") Integer payPrice,
             @RequestParam("sign") String sign
     ) {
-          try {
-              UserPay userPay=userPayMapper.selectByPrimaryKey(orderId);
-              if(userPay==null)
-                  return Response.errorResponse("订单不存在");
-              int userId=userPay.getUserId();
-              int value=payPrice*10;
-              userValueMapper.updateValueAdd(userId,value);
-              return Response.successResponse();
-          }catch (Exception e){
-                e.printStackTrace();
-                return Response.errorResponse("充值失败");
-          }
+        try {
+            UserPay userPay = userPayMapper.selectByPrimaryKey(orderId);
+            if (userPay == null)
+                return Response.errorResponse("订单不存在");
+            int userId = userPay.getUserId();
+            int value = payPrice * 10;
+            userValueMapper.updateValueAdd(userId, value);
+            return Response.successResponse();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.errorResponse("充值失败");
+        }
     }
 
 

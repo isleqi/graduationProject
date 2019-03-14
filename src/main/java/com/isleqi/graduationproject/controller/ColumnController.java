@@ -72,6 +72,9 @@ public class ColumnController {
 
     }
 
+
+
+
     @RequestMapping(value = "getArticleById", method = RequestMethod.GET)
     public Response getArticleById(@RequestHeader("token") String token, int articleId){
         try {
@@ -276,9 +279,14 @@ public class ColumnController {
     }
 
     @RequestMapping(value = "search",method = RequestMethod.POST)
-    public Response search(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("str") String str){
+    public Response search(@RequestHeader("token") String token,@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("str") String str){
         try{
-            PageBean<ArticleVo> data = articleService.getListBySearch(pageNum,pageSize,str);
+            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
+            if(user==null){
+                return Response.errorResponse("token失效，请重新登录");
+            }
+            int userId=user.getId();
+            PageBean<ArticleVo> data = articleService.getListBySearch(pageNum,pageSize,str,userId);
             return Response.successResponseWithData(data);
         }catch (Exception e){
             e.printStackTrace();

@@ -57,7 +57,7 @@ public class LoginController {
            if(redisUtil == null) {
                logger.info("redisUtil为空");
            }
-           redisUtil.set(RedisKeyPrefix.USER_TOKEN+token,user);
+           redisUtil.set(RedisKeyPrefix.USER_TOKEN+token,user,Constant.JWT_TTL);
            return Response.successResponseWithData(token);
        }
        else {
@@ -112,13 +112,13 @@ public class LoginController {
                    userService.updateUserAuth(userAuth);
                 userInfo.setId(userAuth.getUserId());
             }
-            redisUtil.set(RedisKeyPrefix.USER_TOKEN+token,userInfo);   //将token存入redis中
+            redisUtil.set(RedisKeyPrefix.USER_TOKEN+token,userInfo,Constant.JWT_TTL);   //将token存入redis中
 
             ModelAndView mv = new ModelAndView();
             Map<String, String> data=new HashMap();
             data.put("token",token);
             data.put("code","200");
-            mv.setViewName("/success");
+            mv.setViewName("success");
             mv.addObject("data", data);
             return mv;
 
@@ -128,7 +128,7 @@ public class LoginController {
             ModelAndView mv = new ModelAndView();
             Map<String, String> data=new HashMap<String, String>();
             data.put("code","500");
-            mv.setViewName("/error");
+            mv.setViewName("error");
             mv.addObject("data", data);
             return mv;
         }
@@ -190,7 +190,7 @@ public class LoginController {
 
 
 
-            redisUtil.set(RedisKeyPrefix.USER_TOKEN+token,userInfo);   //将token存入redis中
+            redisUtil.set(RedisKeyPrefix.USER_TOKEN+token,userInfo,Constant.JWT_TTL);   //将token存入redis中
 
 
 
