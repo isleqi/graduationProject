@@ -79,17 +79,25 @@ public class UserController {
     @RequestMapping(value = "updateUserInfo", method = RequestMethod.POST)
     public Response updateUserInfo(@RequestHeader("token") String token,
                                  @RequestParam(value = "des", required = false) String des,
+                                   @RequestParam(value = "name", required = false) String name,
                                  @RequestParam(value = "avatarPath", required = false) String avatarPath) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
 
             if(des!=null)
                 user.setUserDes(des);
             if(avatarPath!=null)
                 user.setUserIconUrl(avatarPath);
+            if(name!=null)
+                user.setUserName(name);
 
             userService.updateUser(user);
 
@@ -144,18 +152,16 @@ public class UserController {
 
     @RequestMapping(value = "getBaseUserInfo", method = RequestMethod.POST)
     public Response getBaseUserInfo(String token) {
-        logger.info(token);
-        // String token_=JSONObject.parseObject(token).getString("token");
-        User data = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-//        System.out.println((data.getId() + "!!!!!!"));
-        if (data == null || "".equals(data)) {
-            JSONObject msg = new JSONObject();
-            msg.put("code", 403);
-            msg.put("msg", "token失效");
-            return Response.successResponseWithData(msg);
-        } else {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User _user;
+        if(info instanceof User){
+            _user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+
             redisUtil.expire(RedisKeyPrefix.USER_TOKEN + token, Constant.JWT_TTL);
-            int userId = data.getId();
+            int userId = _user.getId();
             User user = userService.findByUserId(userId);
             UserInfoVo userInfoVo = new UserInfoVo();
             userInfoVo.setUser(user);
@@ -171,18 +177,23 @@ public class UserController {
             userInfoVo.setFollowsNum(followsNum);
 
             return Response.successResponseWithData(userInfoVo);
-        }
+
     }
 
 
     @RequestMapping(value = "follow", method = RequestMethod.GET)
     public Response followUser(@RequestHeader("token") String token, @RequestParam("useredId") Integer useredId) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+
         try {
 
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
             int userId = user.getId();
 
             userOperationService.followUser(userId, useredId);
@@ -197,11 +208,16 @@ public class UserController {
 
     @RequestMapping(value = "hasfollow", method = RequestMethod.GET)
     public Response hasfollow(@RequestHeader("token") String token, @RequestParam("useredId") Integer useredId) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
             int userId = user.getId();
             boolean data = userOperationService.hasFollowUser(userId, useredId);
             return Response.successResponseWithData(data);
@@ -214,12 +230,16 @@ public class UserController {
 
     @RequestMapping(value = "cancelFollow", method = RequestMethod.GET)
     public Response cancelFollow(@RequestHeader("token") String token, @RequestParam("useredId") Integer useredId) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+
         try {
 
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
             int userId = user.getId();
 
             userOperationService.cancelFollowUser(userId, useredId);
@@ -234,11 +254,16 @@ public class UserController {
 
     @RequestMapping(value = "getFollowAnswerList", method = RequestMethod.GET)
     public Response getFollowAnswerList(@RequestHeader("token") String token, @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
+
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
             int userId = user.getId();
             PageBean<AnswerVo> data = answerService.getFollowList(pageNum, pageSize, userId);
 
@@ -253,11 +278,16 @@ public class UserController {
 
     @RequestMapping(value = "getFollowQuesList", method = RequestMethod.GET)
     public Response getFollowQuesList(@RequestHeader("token") String token, @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
+
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
             int userId = user.getId();
             PageBean<AnswerVo> data = questionService.getFollowQuestionList(userId, pageNum, pageSize);
 
@@ -272,11 +302,16 @@ public class UserController {
 
     @RequestMapping(value = "getMyAnswer", method = RequestMethod.GET)
     public Response getMyAnswer(@RequestHeader("token") String token, @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
+
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
             int userId = user.getId();
             PageBean<AnswerVo> data = answerService.getListByUserId(pageNum, pageSize, userId);
 
@@ -291,11 +326,16 @@ public class UserController {
 
     @RequestMapping(value = "getMyArticle", method = RequestMethod.GET)
     public Response getMyArticle(@RequestHeader("token") String token, @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
+
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
             int userId = user.getId();
             PageBean<ArticleVo> data = articleService.getMyArticleList(userId, pageNum, pageSize);
 
@@ -311,11 +351,16 @@ public class UserController {
 
     @RequestMapping(value = "getMyQuestion", method = RequestMethod.GET)
     public Response getMyQuestion(@RequestHeader("token") String token, @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
+
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
             int userId = user.getId();
             PageBean<QuestionVo> data = questionService.getByUserId(pageNum, pageSize, userId);
 
@@ -330,11 +375,16 @@ public class UserController {
 
     @RequestMapping(value = "getFollowUsers", method = RequestMethod.GET)
     public Response getFollowUsers(@RequestHeader("token") String token, @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
+
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
             int userId = user.getId();
             PageBean<UserRelationVo> data = userService.getFollowUserList(userId, pageNum, pageSize);
 
@@ -349,11 +399,15 @@ public class UserController {
 
     @RequestMapping(value = "getFanUsers", method = RequestMethod.GET)
     public Response getFanUsers(@RequestHeader("token") String token, @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
             int userId = user.getId();
             PageBean<UserRelationVo> data = userService.getFanUserList(userId, pageNum, pageSize);
 

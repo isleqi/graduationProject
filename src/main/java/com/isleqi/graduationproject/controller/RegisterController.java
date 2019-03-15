@@ -98,6 +98,10 @@ public class RegisterController {
     @PostMapping(value = "sendUserMsm")
     @ResponseBody
     public Response sendUserMsm(@RequestParam(value = "mobile") String mobile) {
+       UserAuth ua = userService.findUserAuthByIdentifier(mobile);
+       if(ua!=null){
+           return Response.errorResponse("该账号已存在");
+       }
         String code = (int) (Math.random() * 9000) + 1000 + "";
         Sms sms=new Sms();
         sms.setPhoneNo(mobile);
@@ -120,6 +124,10 @@ public class RegisterController {
     @PostMapping(value = "sendUserEmail")
     @ResponseBody
     public Response sendUserEmail(@RequestParam(value = "Email") String emailAccount) {
+        UserAuth ua = userService.findUserAuthByIdentifier(emailAccount);
+        if(ua!=null){
+            return Response.errorResponse("该账号已存在");
+        }
         String code = (int) (Math.random() * 9000) + 1000 + "";
         String subject = "注册验证码!";
         Response response = sendSimpleMail(emailAccount, subject, code);
@@ -159,7 +167,7 @@ public class RegisterController {
     @ResponseBody
     public Response checkEmilCode(@RequestParam(value = "code") String code,@RequestParam(value = "email") String email) {
         String redisCode = (String) redisUtil.get(RedisKeyPrefix.EMAIL_KEY+email);
-        if(!code.equals(redisCode)){
+        if(redisCode==null||!code.equals(redisCode)){
            return Response.errorResponse("验证码错误");
         }
         return Response.successResponseWithData("验证成功");
@@ -170,7 +178,7 @@ public class RegisterController {
     @ResponseBody
     public Response checkPhoneCode(@RequestParam(value = "code") String code,@RequestParam(value = "phone") String phone) {
         String redisCode = (String) redisUtil.get(RedisKeyPrefix.SMS_KEY+phone);
-        if(!redisCode.equals(code)){
+        if(redisCode==null||!redisCode.equals(code)){
           return  Response.errorResponse("验证码错误");
         }
         return Response.successResponseWithData("验证成功");

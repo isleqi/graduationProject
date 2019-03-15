@@ -106,11 +106,16 @@ public class AnswerController {
 
     @RequestMapping(value = "follow", method = RequestMethod.GET)
     public Response followAns(@RequestHeader("token") String token, @RequestParam("ansId") Integer ansId) {
+
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
             int userId = user.getId();
             userOperationService.followAns(ansId, userId);
             return Response.successResponse();
@@ -124,11 +129,16 @@ public class AnswerController {
 
     @RequestMapping(value = "hasfollow", method = RequestMethod.GET)
     public Response hasfollow(@RequestHeader("token") String token, @RequestParam("ansId") Integer ansId) {
+
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("hasfollow_token失效，请重新登录");
-            }
+
             int userId = user.getId();
             boolean data = userOperationService.hasFollowAns(ansId, userId);
             return Response.successResponseWithData(data);
@@ -141,12 +151,16 @@ public class AnswerController {
 
     @RequestMapping(value = "cancelFollow", method = RequestMethod.GET)
     public Response cancelFollow(@RequestHeader("token") String token, @RequestParam("ansId") Integer ansId) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
         try {
 
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
             int userId = user.getId();
             userOperationService.cancelFollowAns(ansId, userId);
             return Response.successResponse();
@@ -229,11 +243,16 @@ public class AnswerController {
     }
     @RequestMapping(value = "cancelLike", method = RequestMethod.GET)
     public Response cancelLike(@RequestHeader("token") String token, Integer ansId) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("cancelLike_token失效，请重新登录");
-            }
+
             int userId = user.getId();
             userOperationService.cancelLike(ansId, userId);
             return Response.successResponse();
@@ -246,11 +265,15 @@ public class AnswerController {
 
     @RequestMapping(value = "hasLike", method = RequestMethod.GET)
     public Response hasLike(@RequestHeader("token") String token, Integer ansId) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("hasLike_token失效，请重新登录");
-            }
+
             int userId = user.getId();
             Boolean data = userOperationService.hasLike(ansId, userId);
             return Response.successResponseWithData(data);
@@ -263,11 +286,15 @@ public class AnswerController {
 
     @RequestMapping(value = "comment", method = RequestMethod.POST)
     public Response comment(@RequestHeader("token") String token, String comment, Integer ansId) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("comment_token失效，请重新登录");
-            }
+
             int userId = user.getId();
             AnsComment ansComment = new AnsComment();
             ansComment.setAnsId(ansId);
@@ -304,11 +331,16 @@ public class AnswerController {
 
     @RequestMapping(value = "comment/reply", method = RequestMethod.POST)
     public Response reply(@RequestHeader("token") String token, String comtent, Integer commentId, Integer replyedUserId) {
+
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("reply_token失效，请重新登录");
-            }
+
             int userId = user.getId();
 
             AnsReply ansReply = new AnsReply();

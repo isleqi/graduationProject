@@ -94,11 +94,15 @@ public class ColumnController {
 
     @RequestMapping(value = "getArticleList", method = RequestMethod.GET)
     public Response getArticleList(@RequestHeader("token") String token,@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){
+
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
 
             PageBean<ArticleVo> data =articleService.getArticleList(user.getId(),pageNum, pageSize);
 
@@ -226,11 +230,15 @@ public class ColumnController {
 
     @RequestMapping(value = "getFollowUserArticleList",method = RequestMethod.GET)
     public Response getFollowUserArticleList(@RequestHeader("token") String token,@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
         try{
-            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
-            if(user==null){
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
             int userId=user.getId();
             PageBean<ArticleVo> data  = articleService.getFollowUserArticleList(pageNum,pageSize,userId);
             return Response.successResponseWithData(data);
@@ -244,11 +252,16 @@ public class ColumnController {
 
     @RequestMapping(value = "payForArticle",method = RequestMethod.GET)
     public Response payForArticle(@RequestHeader("token") String token,Integer articleId){
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+
         try{
-            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
-            if(user==null){
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
             int userId=user.getId();
             ArticleVo data = articleService.getArticleById(articleId);
             int userValue=articleService.getUserValue(userId);
@@ -280,11 +293,16 @@ public class ColumnController {
 
     @RequestMapping(value = "search",method = RequestMethod.POST)
     public Response search(@RequestHeader("token") String token,@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("str") String str){
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+
         try{
-            User user= (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN+token);
-            if(user==null){
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
             int userId=user.getId();
             PageBean<ArticleVo> data = articleService.getListBySearch(pageNum,pageSize,str,userId);
             return Response.successResponseWithData(data);

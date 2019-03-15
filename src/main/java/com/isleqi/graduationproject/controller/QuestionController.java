@@ -53,13 +53,17 @@ public class QuestionController {
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public Response addQuestion(@RequestHeader("token") String token, @RequestBody QuestionParamVo questionParamVo) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+
         try {
 
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
 
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
 
             Integer userId = user.getId();
             questionParamVo.setQuesUserId(user.getId());
@@ -92,12 +96,17 @@ public class QuestionController {
 
     @RequestMapping(value = "getFollowQuesList", method = RequestMethod.GET)
     public Response getFollowQues(@RequestHeader("token") String token, @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+
         try {
 
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
             int userId = user.getId();
             PageBean<AnswerVo> data = questionService.getFollowQuestionList(userId, pageNum, pageSize);
             return Response.successResponseWithData(data);
@@ -111,12 +120,17 @@ public class QuestionController {
 
     @RequestMapping(value = "follow", method = RequestMethod.GET)
     public Response followQues(@RequestHeader("token") String token, @RequestParam("quesId") Integer quesId) {
+
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
         try {
 
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
             int userId = user.getId();
             userOperationService.followQues(quesId, userId);
 
@@ -131,12 +145,16 @@ public class QuestionController {
 
     @RequestMapping(value = "cancelFollow", method = RequestMethod.GET)
     public Response cancelFollow(@RequestHeader("token") String token, @RequestParam("quesId") Integer quesId) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+
         try {
 
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
             int userId = user.getId();
             userOperationService.cancelFollowQues(quesId, userId);
 
@@ -151,11 +169,17 @@ public class QuestionController {
 
     @RequestMapping(value = "hasfollow", method = RequestMethod.GET)
     public Response hasfollow(@RequestHeader("token") String token, @RequestParam("quesId") Integer quesId) {
+        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
+        User user;
+        if(info instanceof User){
+            user=(User)info;
+        }else {
+            return Response.errorResponse("token失效，请重新登录");
+        }
+
+
         try {
-            User user = (User) redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-            if (user == null) {
-                return Response.errorResponse("token失效，请重新登录");
-            }
+
             int userId = user.getId();
             boolean flag = userOperationService.hasFollowQues(quesId, userId);
             int num = questionMapper.selectByPrimaryKey(quesId).getFollowNum();
