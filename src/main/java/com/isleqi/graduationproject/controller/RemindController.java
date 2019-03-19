@@ -1,5 +1,6 @@
 package com.isleqi.graduationproject.controller;
 
+import com.isleqi.graduationproject.component.common.Authorized;
 import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.component.common.RedisKeyPrefix;
 import com.isleqi.graduationproject.component.common.domain.Response;
@@ -14,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("app/remind")
 public class RemindController {
@@ -27,15 +30,12 @@ public class RemindController {
     @Autowired
     UserNotifyMapper userNotifyMapper;
 
+    @Authorized
     @RequestMapping(value = "get",method = RequestMethod.GET)
-    public Response get(@RequestHeader("token") String token, @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize){
-        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-        User user;
-        if(info instanceof User){
-            user=(User)info;
-        }else {
-            return Response.errorResponse("token失效，请重新登录");
-        }
+    public Response get(HttpServletRequest request,
+                        @RequestParam("pageNum") int pageNum,
+                        @RequestParam("pageSize") int pageSize){
+        User user= (User) request.getAttribute("user");
         try{
             PageBean<NotifyVo> data = notifyService.getNotifyList(user.getId(),pageNum,pageSize);
             return Response.successResponseWithData(data);
@@ -46,15 +46,11 @@ public class RemindController {
         }
     }
 
+    @Authorized
     @RequestMapping(value = "hadRead",method = RequestMethod.GET)
-    public Response hadRead(@RequestHeader("token") String token,@RequestParam("notifyId") Integer notifyId){
-        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-        User user;
-        if(info instanceof User){
-            user=(User)info;
-        }else {
-            return Response.errorResponse("token失效，请重新登录");
-        }
+    public Response hadRead(HttpServletRequest request,
+                            @RequestParam("notifyId") Integer notifyId){
+        User user= (User) request.getAttribute("user");
         try{
             userNotifyMapper.hadRead(user.getId(),notifyId);
             return Response.successResponse();
@@ -64,15 +60,10 @@ public class RemindController {
         }
     }
 
+    @Authorized
     @RequestMapping(value = "hadReadAll",method = RequestMethod.GET)
-    public Response hadRead(@RequestHeader("token") String token){
-        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-        User user;
-        if(info instanceof User){
-            user=(User)info;
-        }else {
-            return Response.errorResponse("token失效，请重新登录");
-        }
+    public Response hadRead(HttpServletRequest request){
+        User user= (User) request.getAttribute("user");
         try{
             userNotifyMapper.hadReadAll(user.getId());
             return Response.successResponse();

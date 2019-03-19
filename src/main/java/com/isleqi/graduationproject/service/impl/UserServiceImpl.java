@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.isleqi.graduationproject.domain.User;
 import com.isleqi.graduationproject.service.UserService;
 
+import javax.security.sasl.SaslServer;
+
 
 @Transactional
 @Service("userService")
@@ -99,6 +101,7 @@ public class UserServiceImpl  implements UserService{
 		List<UserRelationVo> list=null;
 		try{
 			list=userRelationsMapper.getFollowUsers(userId);
+
 		}catch (Exception e){
 			e.printStackTrace();
 		}finally {
@@ -115,6 +118,12 @@ public class UserServiceImpl  implements UserService{
 		List<UserRelationVo> list=null;
 		try{
 			list=userRelationsMapper.getFanUsers(userId);
+			for(UserRelationVo item:list){
+				System.out.println(item.getFollowId()+" "+userId);
+				UserRelationsKey data=userRelationsMapper.selectByPrimaryKey(userId,item.getUserId());
+				if(data==null)
+					item.setHasFollow(false);
+			}
 		}catch (Exception e){
 			e.printStackTrace();
 		}finally {

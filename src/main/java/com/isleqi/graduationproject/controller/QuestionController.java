@@ -3,6 +3,7 @@ package com.isleqi.graduationproject.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
+import com.isleqi.graduationproject.component.common.Authorized;
 import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.component.common.RedisKeyPrefix;
 import com.isleqi.graduationproject.component.common.domain.Response;
@@ -21,6 +22,7 @@ import com.isleqi.graduationproject.service.NotifyService;
 import com.isleqi.graduationproject.service.QuestionService;
 import com.isleqi.graduationproject.service.UserOperationService;
 import com.isleqi.graduationproject.util.RedisUtil;
+import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,15 +53,11 @@ public class QuestionController {
     NotifyService notifyService;
 
 
+    @Authorized
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public Response addQuestion(@RequestHeader("token") String token, @RequestBody QuestionParamVo questionParamVo) {
-        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-        User user;
-        if(info instanceof User){
-            user=(User)info;
-        }else {
-            return Response.errorResponse("token失效，请重新登录");
-        }
+    public Response addQuestion(HttpServletRequest request,
+                                @RequestBody QuestionParamVo questionParamVo) {
+        User user= (User) request.getAttribute("user");
 
         try {
 
@@ -94,16 +92,12 @@ public class QuestionController {
         }
     }
 
+    @Authorized
     @RequestMapping(value = "getFollowQuesList", method = RequestMethod.GET)
-    public Response getFollowQues(@RequestHeader("token") String token, @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
-        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-        User user;
-        if(info instanceof User){
-            user=(User)info;
-        }else {
-            return Response.errorResponse("token失效，请重新登录");
-        }
-
+    public Response getFollowQues(HttpServletRequest request,
+                                  @RequestParam("pageNum") int pageNum,
+                                  @RequestParam("pageSize") int pageSize) {
+        User user= (User) request.getAttribute("user");
         try {
 
 
@@ -118,16 +112,11 @@ public class QuestionController {
 
     }
 
+    @Authorized
     @RequestMapping(value = "follow", method = RequestMethod.GET)
-    public Response followQues(@RequestHeader("token") String token, @RequestParam("quesId") Integer quesId) {
-
-        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-        User user;
-        if(info instanceof User){
-            user=(User)info;
-        }else {
-            return Response.errorResponse("token失效，请重新登录");
-        }
+    public Response followQues(HttpServletRequest request,
+                               @RequestParam("quesId") Integer quesId) {
+        User user= (User) request.getAttribute("user");
         try {
 
 
@@ -143,15 +132,11 @@ public class QuestionController {
 
     }
 
+    @Authorized
     @RequestMapping(value = "cancelFollow", method = RequestMethod.GET)
-    public Response cancelFollow(@RequestHeader("token") String token, @RequestParam("quesId") Integer quesId) {
-        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-        User user;
-        if(info instanceof User){
-            user=(User)info;
-        }else {
-            return Response.errorResponse("token失效，请重新登录");
-        }
+    public Response cancelFollow(HttpServletRequest request,
+                                 @RequestParam("quesId") Integer quesId) {
+        User user= (User) request.getAttribute("user");
 
         try {
 
@@ -167,17 +152,11 @@ public class QuestionController {
 
     }
 
+    @Authorized
     @RequestMapping(value = "hasfollow", method = RequestMethod.GET)
-    public Response hasfollow(@RequestHeader("token") String token, @RequestParam("quesId") Integer quesId) {
-        Object info=redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-        User user;
-        if(info instanceof User){
-            user=(User)info;
-        }else {
-            return Response.errorResponse("token失效，请重新登录");
-        }
-
-
+    public Response hasfollow(HttpServletRequest request,
+                              @RequestParam("quesId") Integer quesId) {
+        User user= (User) request.getAttribute("user");
         try {
 
             int userId = user.getId();
@@ -195,7 +174,8 @@ public class QuestionController {
     }
 
     @RequestMapping(value = "getAllQuestion", method = RequestMethod.GET)
-    public Response getAllQuestion(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
+    public Response getAllQuestion(@RequestParam("pageNum") int pageNum,
+                                   @RequestParam("pageSize") int pageSize) {
         try {
             PageBean<QuestionVo> data = questionService.getQuestionList(pageNum, pageSize);
             return Response.successResponseWithData(data);
@@ -208,7 +188,9 @@ public class QuestionController {
     }
 
     @RequestMapping(value = "getByTag", method = RequestMethod.GET)
-    public Response getByTag(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, @RequestParam("tagId") int tagId) {
+    public Response getByTag(@RequestParam("pageNum") int pageNum,
+                             @RequestParam("pageSize") int pageSize,
+                             @RequestParam("tagId") int tagId) {
         try {
             PageBean<QuestionVo> data = questionService.getByTagId(pageNum, pageSize, tagId);
             return Response.successResponseWithData(data);
@@ -265,15 +247,12 @@ public class QuestionController {
 
     }
 
+    @Authorized
     @RequestMapping(value = "invitation", method = RequestMethod.GET)
-    public Response invitation(@RequestHeader("token") String token, @RequestParam(value = "userIds[]") Integer[] userIds, @RequestParam(value = "quesId") Integer quesId) {
-        Object info = redisUtil.get(RedisKeyPrefix.USER_TOKEN + token);
-        User user;
-        if (info instanceof User) {
-            user = (User) info;
-        } else {
-            return Response.errorResponse("token失效，请重新登录");
-        }
+    public Response invitation(HttpServletRequest request,
+                               @RequestParam(value = "userIds[]") Integer[] userIds,
+                               @RequestParam(value = "quesId") Integer quesId) {
+        User user= (User) request.getAttribute("user");
         try {
             for (int i = 0; i < userIds.length; i++) {
                 Notify notify = new Notify();
@@ -292,7 +271,9 @@ public class QuestionController {
     }
 
     @RequestMapping(value = "search", method = RequestMethod.POST)
-    public Response search(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, @RequestParam("str") String str) {
+    public Response search(@RequestParam("pageNum") int pageNum,
+                           @RequestParam("pageSize") int pageSize,
+                           @RequestParam("str") String str) {
         try {
             PageBean<QuestionVo> data = questionService.getListBySearch(pageNum, pageSize, str);
             return Response.successResponseWithData(data);

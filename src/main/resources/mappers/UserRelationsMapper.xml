@@ -48,14 +48,14 @@
 
     <select id="getFanIds"  parameterType="java.lang.Integer" resultType="java.lang.Integer">
     select
-      user_id
+      user_id,follow_id
     from user_relations
     where follow_id = #{userId,jdbcType=INTEGER}
   </select>
 
     <select id="getFanUsers"  parameterType="java.lang.Integer" resultMap="ResultMapWithFanUser">
     select
-      user_id
+      user_id,follow_id
     from user_relations
     where follow_id = #{userId,jdbcType=INTEGER}
   </select>

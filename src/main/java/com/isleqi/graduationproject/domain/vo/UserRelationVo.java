@@ -10,4 +10,6 @@ public class UserRelationVo {
     private  Integer followId;
 
     private User user;
+
+    private Boolean hasFollow=true;
 }
