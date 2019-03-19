@@ -4,6 +4,7 @@ import com.isleqi.graduationproject.component.common.Authorized;
 import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.component.common.RedisKeyPrefix;
 import com.isleqi.graduationproject.component.common.domain.Response;
+import com.isleqi.graduationproject.dao.mappers.NotifyMapper;
 import com.isleqi.graduationproject.dao.mappers.UserNotifyMapper;
 import com.isleqi.graduationproject.domain.Notify;
 import com.isleqi.graduationproject.domain.User;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("app/remind")
@@ -29,6 +31,8 @@ public class RemindController {
     RedisUtil redisUtil;
     @Autowired
     UserNotifyMapper userNotifyMapper;
+    @Autowired
+    NotifyMapper notifyMapper;
 
     @Authorized
     @RequestMapping(value = "get",method = RequestMethod.GET)
@@ -72,5 +76,34 @@ public class RemindController {
             return Response.errorResponse("更新全部消息失败");
         }
     }
+
+    @Authorized
+    @RequestMapping(value = "getNotReadAll",method = RequestMethod.GET)
+    public Response getNotReadAll(HttpServletRequest request ,
+                                  @RequestParam("pageNum") int pageNum,
+                                  @RequestParam("pageSize") int pageSize){
+        User user= (User) request.getAttribute("user");
+        try{
+           PageBean<NotifyVo> data = notifyService.getNotReadNotifyList(user.getId(),pageNum,pageSize);
+            return Response.successResponseWithData(data);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.errorResponse("获取全部未读消息失败");
+        }
+    }
+
+    @Authorized
+    @RequestMapping(value = "clearAll",method = RequestMethod.GET)
+    public Response clearAll(HttpServletRequest request){
+        User user= (User) request.getAttribute("user");
+        try{
+            notifyService.clearAll(user.getId());
+            return Response.successResponse();
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.errorResponse("清空信息失败");
+        }
+    }
+
 
 }

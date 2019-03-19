@@ -42,9 +42,22 @@
     from notify  n join user_notify u on n.id=notify_id
     where user_id=#{userId} ORDER by n.create_time desc
   </select>
+  <select id="selectAllNotReadByUserId" resultMap="BaseResultMapWithUser" parameterType="java.lang.Integer" >
+    select
+   n.id, content, type, target_id,target_type, send_user_id,n.create_time,has_read
+    from notify  n join user_notify u on n.id=notify_id
+    where user_id=#{userId} and has_read=0 ORDER by n.create_time desc
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from notify
     where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteAllByPrimaryKey" parameterType="java.util.List" >
+    delete from notify
+    where id in
+    <foreach collection="list" index="index" item="item" open="(" close=")" separator=",">
+      #{item}
+    </foreach>
   </delete>
 
   <insert id="insertSelective" parameterType="com.isleqi.graduationproject.domain.Notify"  useGeneratedKeys="true"

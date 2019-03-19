@@ -87,9 +87,10 @@ public class AnswerController {
 
     }
 
-    @RequestMapping(value = "updateAnswer", method = RequestMethod.GET)
-    public Response updateAnswer(@RequestParam("ansId") Integer ansId,
-                                 @RequestParam("content") String content) {
+    @RequestMapping(value = "updateAnswer", method = RequestMethod.POST)
+
+    public Response updateAnswer(@RequestParam Integer ansId,
+                                 @RequestParam String content) {
         try {
             answerService.updateAnswer(content, ansId);
             return Response.successResponse();

@@ -98,6 +98,31 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public PageBean<ArticleVo> getArticleListById(int userId,int _userId,int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<ArticleVo> list=null;
+        try{
+            list=articleMapper.selectArticleListByUserId(_userId);
+            for (ArticleVo item:list) {
+                Boolean data=hasFollowArticle(item.getArticleId(),userId);
+                if(userId==item.getUserId())
+                    item.setMyArticle(true);
+                else
+                    item.setMyArticle(false);
+                item.setHasPay(data);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            PageHelper.clearPage();
+        }
+        PageBean<ArticleVo> info = new PageBean<>(list);
+
+        return info;
+    }
+
+
+    @Override
     public PageBean<ArticleVo> getMyArticleList(int userId, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         List<ArticleVo> list=null;
@@ -168,8 +193,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public void updateArticle(String content, Integer articleId) {
-
+    public void updateArticle(Article article) {
+          articleMapper.updateByPrimaryKeySelective(article);
     }
 
     @Override

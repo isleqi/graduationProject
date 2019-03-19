@@ -20,6 +20,9 @@ public interface ArticleMapper {
 
     List<ArticleVo> selectArticleList();
 
+    List<ArticleVo> selectArticleListByUserId(int userId);
+
+
     List<ArticleVo> selectMyArticleList(Integer userId);
 
     List<ArticleVo> selectListByStr(String str);

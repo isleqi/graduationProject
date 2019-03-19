@@ -72,9 +72,21 @@ public class ColumnController {
 
     }
 
+    @RequestMapping(value = "updateArticle", method = RequestMethod.POST)
+    public  Response updateArticle(@RequestBody Article article){
+        try{
+            System.out.println(article.getArticleContent());
+            articleService.updateArticle(article);
+            return  Response.successResponse();
+        }catch (Exception e){
+            return Response.errorResponse("更新文章失败");
+        }
+    }
 
 
-@Authorized
+
+
+    @Authorized
     @RequestMapping(value = "getArticleById", method = RequestMethod.GET)
     public Response getArticleById( int articleId,
                                     HttpServletRequest request){

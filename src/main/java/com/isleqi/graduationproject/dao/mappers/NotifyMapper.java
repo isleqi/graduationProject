@@ -12,6 +12,9 @@ import java.util.List;
 public interface NotifyMapper {
     int deleteByPrimaryKey(Integer id);
 
+    int deleteAllByPrimaryKey(List list);
+
+
     int insert(Notify record);
 
     int insertSelective(Notify record);
@@ -19,6 +22,8 @@ public interface NotifyMapper {
     Notify selectByPrimaryKey(Integer id);
 
     List<NotifyVo> selectByUserId(Integer userId);
+
+    List<NotifyVo> selectAllNotReadByUserId(Integer userId);
 
     int updateByPrimaryKeySelective(Notify record);
 

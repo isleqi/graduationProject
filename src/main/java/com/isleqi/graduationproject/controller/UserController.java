@@ -169,11 +169,30 @@ public class UserController {
 
     }
 
+    @RequestMapping(value = "getUserInfo", method = RequestMethod.POST)
+    public Response getUserInfo(Integer userId) {
+
+        User user = userService.findByUserId(userId);
+        UserInfoVo userInfoVo = new UserInfoVo();
+        userInfoVo.setUser(user);
+        List<Integer> followIds = userService.getFollowIds(userId);
+        List<Integer> fanIds = userService.getFanIds(userId);
+
+
+        int followsNum = followIds.size();
+        int fansNum = fanIds.size();
+        userInfoVo.setFansNum(fansNum);
+        userInfoVo.setFollowsNum(followsNum);
+
+        return Response.successResponseWithData(userInfoVo);
+
+    }
+
     @Authorized
     @RequestMapping(value = "follow", method = RequestMethod.GET)
     public Response followUser(HttpServletRequest request,
                                @RequestParam("useredId") Integer useredId) {
-        User user= (User) request.getAttribute("user");
+        User user = (User) request.getAttribute("user");
 
         try {
 
@@ -194,7 +213,7 @@ public class UserController {
     @RequestMapping(value = "hasfollow", method = RequestMethod.GET)
     public Response hasfollow(HttpServletRequest request,
                               @RequestParam("useredId") Integer useredId) {
-        User user= (User) request.getAttribute("user");
+        User user = (User) request.getAttribute("user");
 
         try {
 
@@ -212,7 +231,7 @@ public class UserController {
     @RequestMapping(value = "cancelFollow", method = RequestMethod.GET)
     public Response cancelFollow(HttpServletRequest request,
                                  @RequestParam("useredId") Integer useredId) {
-        User user= (User) request.getAttribute("user");
+        User user = (User) request.getAttribute("user");
 
         try {
 
@@ -234,7 +253,7 @@ public class UserController {
                                         @RequestParam("pageNum") int pageNum,
                                         @RequestParam("pageSize") int pageSize) {
 
-        User user= (User) request.getAttribute("user");
+        User user = (User) request.getAttribute("user");
         try {
 
             int userId = user.getId();
@@ -255,7 +274,7 @@ public class UserController {
                                       @RequestParam("pageNum") int pageNum,
                                       @RequestParam("pageSize") int pageSize) {
 
-        User user= (User) request.getAttribute("user");
+        User user = (User) request.getAttribute("user");
 
         try {
 
@@ -277,7 +296,7 @@ public class UserController {
                                 @RequestParam("pageNum") int pageNum,
                                 @RequestParam("pageSize") int pageSize) {
 
-        User user= (User) request.getAttribute("user");
+        User user = (User) request.getAttribute("user");
 
         try {
 
@@ -295,8 +314,8 @@ public class UserController {
 
     @RequestMapping(value = "getUserAnswer", method = RequestMethod.GET)
     public Response getUserAnswer(@RequestParam("userId") int userId,
-                                @RequestParam("pageNum") int pageNum,
-                                @RequestParam("pageSize") int pageSize) {
+                                  @RequestParam("pageNum") int pageNum,
+                                  @RequestParam("pageSize") int pageSize) {
 
 
         try {
@@ -317,7 +336,7 @@ public class UserController {
                                  @RequestParam("pageNum") int pageNum,
                                  @RequestParam("pageSize") int pageSize) {
 
-        User user= (User) request.getAttribute("user");
+        User user = (User) request.getAttribute("user");
 
         try {
 
@@ -333,15 +352,18 @@ public class UserController {
         }
     }
 
+    @Authorized
     @RequestMapping(value = "getUserArticle", method = RequestMethod.GET)
-    public Response getUserArticle(@RequestParam("userId") int userId,
-                                 @RequestParam("pageNum") int pageNum,
-                                 @RequestParam("pageSize") int pageSize) {
+    public Response getUserArticle(@RequestParam("userId") int _userId,
+                                   @RequestParam("pageNum") int pageNum,
+                                   @RequestParam("pageSize") int pageSize,
+                                   HttpServletRequest request) {
 
-
+        User user = (User) request.getAttribute("user");
+        int userId = user.getId();
         try {
 
-            PageBean<ArticleVo> data = articleService.getMyArticleList(userId, pageNum, pageSize);
+            PageBean<ArticleVo> data = articleService.getArticleListById(userId, _userId, pageNum, pageSize);
 
             return Response.successResponseWithData(data);
 
@@ -359,7 +381,7 @@ public class UserController {
                                   @RequestParam("pageNum") int pageNum,
                                   @RequestParam("pageSize") int pageSize) {
 
-        User user= (User) request.getAttribute("user");
+        User user = (User) request.getAttribute("user");
 
         try {
 
@@ -381,7 +403,7 @@ public class UserController {
                                    @RequestParam("pageNum") int pageNum,
                                    @RequestParam("pageSize") int pageSize) {
 
-        User user= (User) request.getAttribute("user");
+        User user = (User) request.getAttribute("user");
 
         try {
 
@@ -402,7 +424,7 @@ public class UserController {
     public Response getFanUsers(HttpServletRequest request,
                                 @RequestParam("pageNum") int pageNum,
                                 @RequestParam("pageSize") int pageSize) {
-        User user= (User) request.getAttribute("user");
+        User user = (User) request.getAttribute("user");
         try {
 
             int userId = user.getId();
@@ -420,7 +442,7 @@ public class UserController {
     @Authorized
     @RequestMapping(value = "getMyValue", method = RequestMethod.GET)
     public Response getMyValue(HttpServletRequest request) {
-        User user= (User) request.getAttribute("user");
+        User user = (User) request.getAttribute("user");
         try {
             int userId = user.getId();
             UserValue data = userValueMapper.selectByPrimaryKey(userId);
@@ -436,7 +458,7 @@ public class UserController {
     public Response payForValue(HttpServletRequest request,
                                 @RequestParam("price") Integer price,
                                 @RequestParam("orderId") String orderId) {
-        User user= (User) request.getAttribute("user");
+        User user = (User) request.getAttribute("user");
         try {
             int userId = user.getId();
             UserPay userPay = new UserPay();

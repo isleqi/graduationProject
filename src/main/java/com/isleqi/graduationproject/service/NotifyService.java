@@ -13,4 +13,9 @@ public interface NotifyService {
 
     PageBean<NotifyVo> getNotifyList(int userId, int pageNum, int pageSize);
 
+    PageBean<NotifyVo> getNotReadNotifyList(int userId, int pageNum, int pageSize);
+
+
+    void clearAll(Integer userId);
+
 }

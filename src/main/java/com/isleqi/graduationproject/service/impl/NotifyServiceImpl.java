@@ -143,4 +143,30 @@ public class NotifyServiceImpl implements NotifyService {
         }
         return null;
     }
+
+    public PageBean<NotifyVo> getNotReadNotifyList(int userId, int pageNum, int pageSize){
+        PageHelper.startPage(pageNum, pageSize);
+        List<NotifyVo> list = null;
+        try {
+            list = notifyMapper.selectAllNotReadByUserId(userId);
+            for (NotifyVo item : list) {
+                Object target=getTarget(item.getTargetType(), item.getTargetId(),userId);
+                item.setTarget(target);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            PageHelper.clearPage();
+        }
+        PageBean<NotifyVo> info = new PageBean<>(list);
+
+        return info;
+    }
+
+    @Transactional
+    public void clearAll(Integer userId){
+        List<Integer> ids =userNotifyMapper.selectByUserId(userId);
+        userNotifyMapper.deleteByUserId(userId);
+        notifyMapper.deleteAllByPrimaryKey(ids);
+    }
 }

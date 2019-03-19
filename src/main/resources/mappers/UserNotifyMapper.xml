@@ -19,9 +19,20 @@
     from user_notify
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectByUserId"  resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select
+    notify_id
+    from user_notify
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from user_notify
     where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByUserId" parameterType="java.lang.Integer" >
+    delete from user_notify
+    where user_id = #{userId,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.isleqi.graduationproject.domain.UserNotify" >
     insert into user_notify (id, has_read, user_id,
