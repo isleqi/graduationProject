@@ -5,6 +5,7 @@ import com.isleqi.graduationproject.component.common.Authorized;
 import com.isleqi.graduationproject.component.common.PageBean;
 import com.isleqi.graduationproject.component.common.RedisKeyPrefix;
 import com.isleqi.graduationproject.component.common.domain.Response;
+import com.isleqi.graduationproject.dao.mappers.ArticleMapper;
 import com.isleqi.graduationproject.domain.*;
 import com.isleqi.graduationproject.domain.vo.ArticleCommentVo;
 import com.isleqi.graduationproject.domain.vo.ArticleParamVo;
@@ -34,6 +35,8 @@ public class ColumnController {
     ArticleCommentAndReplyService articleCommentAndReplyService;
     @Autowired
     NotifyService notifyService;
+    @Autowired
+    ArticleMapper articleMapper;
 
     @Authorized
     @RequestMapping(value = "add", method = RequestMethod.POST)
@@ -81,6 +84,20 @@ public class ColumnController {
         }catch (Exception e){
             return Response.errorResponse("更新文章失败");
         }
+    }
+
+
+    @RequestMapping(value = "deleteArticle", method = RequestMethod.GET)
+    public Response deleteArticle(@RequestParam("id") Integer id) {
+        try {
+            articleMapper.deleteByPrimaryKey(id);
+            return Response.successResponse();
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+            e.printStackTrace();
+            return Response.errorResponse("删除文章失败");
+        }
+
     }
 
 

@@ -92,6 +92,19 @@ public class QuestionController {
         }
     }
 
+    @RequestMapping(value = "deleteQuestion", method = RequestMethod.GET)
+    public Response deleteQuestion(@RequestParam("quesId") Integer quesId) {
+        try {
+           questionMapper.deleteByPrimaryKey(quesId);
+            return Response.successResponse();
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+            e.printStackTrace();
+            return Response.errorResponse("删除问题失败");
+        }
+
+    }
+
     @Authorized
     @RequestMapping(value = "getFollowQuesList", method = RequestMethod.GET)
     public Response getFollowQues(HttpServletRequest request,

@@ -4,12 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.isleqi.graduationproject.component.common.*;
 import com.isleqi.graduationproject.component.common.domain.Response;
 import com.isleqi.graduationproject.component.common.domain.Sms;
+import com.isleqi.graduationproject.dao.mappers.AdministratorMapper;
 import com.isleqi.graduationproject.dao.mappers.UserPayMapper;
 import com.isleqi.graduationproject.dao.mappers.UserValueMapper;
-import com.isleqi.graduationproject.domain.User;
-import com.isleqi.graduationproject.domain.UserAuth;
-import com.isleqi.graduationproject.domain.UserPay;
-import com.isleqi.graduationproject.domain.UserValue;
+import com.isleqi.graduationproject.domain.*;
 import com.isleqi.graduationproject.domain.vo.*;
 import com.isleqi.graduationproject.service.*;
 import com.isleqi.graduationproject.util.FileUtil;
@@ -55,6 +53,8 @@ public class UserController {
     UserPayMapper userPayMapper;
     @Autowired
     ArticleService articleService;
+    @Autowired
+    AdministratorMapper administratorMapper;
 
 
     @Autowired
@@ -493,6 +493,26 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
             return Response.errorResponse("充值失败");
+        }
+    }
+
+
+    @RequestMapping(value = "isAdministrator", method = RequestMethod.GET)
+    public Response isAdministrator(
+            @RequestParam("id") Integer id
+    ) {
+        try {
+          Administrator administrator =new Administrator();
+          administrator=administratorMapper.selectByUserId(id);
+          Boolean data;
+          if(administrator!=null)
+              data=true;
+          else
+              data=false;
+            return Response.successResponseWithData(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.errorResponse("查询失败");
         }
     }
 

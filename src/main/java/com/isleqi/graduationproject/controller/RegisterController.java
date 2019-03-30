@@ -5,8 +5,10 @@ import com.isleqi.graduationproject.component.common.RedisKeyPrefix;
 import com.isleqi.graduationproject.component.common.ResponseEnmus;
 import com.isleqi.graduationproject.component.common.domain.Response;
 import com.isleqi.graduationproject.component.common.domain.Sms;
+import com.isleqi.graduationproject.dao.mappers.UserValueMapper;
 import com.isleqi.graduationproject.domain.User;
 import com.isleqi.graduationproject.domain.UserAuth;
+import com.isleqi.graduationproject.domain.UserValue;
 import com.isleqi.graduationproject.service.UserService;
 import com.isleqi.graduationproject.util.JWTUtil;
 import com.isleqi.graduationproject.util.RedisUtil;
@@ -39,6 +41,8 @@ public class RegisterController {
     private JavaMailSender mailSender;
     @Value("${mail.fromMail.addr}")
     private String from;
+    @Autowired
+    UserValueMapper userValueMapper;
 
 
 
@@ -69,6 +73,9 @@ public class RegisterController {
 
         if(result==0)
             return Response.errorResponse("注册失败");
+        UserValue userValue=new UserValue();
+        userValue.setUserId(result);
+        userValueMapper.insertSelective(userValue);
 
 
         String subject= JWTUtil.generalSubject(user);

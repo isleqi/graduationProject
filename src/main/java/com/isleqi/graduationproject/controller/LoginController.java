@@ -4,8 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPObject;
 import com.isleqi.graduationproject.component.common.*;
 import com.isleqi.graduationproject.component.common.domain.Response;
+import com.isleqi.graduationproject.dao.mappers.UserValueMapper;
 import com.isleqi.graduationproject.domain.User;
 import com.isleqi.graduationproject.domain.UserAuth;
+import com.isleqi.graduationproject.domain.UserValue;
 import com.isleqi.graduationproject.domain.vo.UserInfoVo;
 import com.isleqi.graduationproject.service.UserService;
 import com.isleqi.graduationproject.util.HttpClientUtil;
@@ -14,6 +16,7 @@ import com.isleqi.graduationproject.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -33,6 +36,10 @@ public class LoginController {
     RedisUtil redisUtil;
     @Autowired
     UserService userService;
+    @Autowired
+    UserValueMapper userValueMapper;
+    @Value("${web.url}")
+    String url;
 
     @RequestMapping(value = "submit", method = RequestMethod.POST)
     public Response loginSubmit(@RequestParam("account") String account, @RequestParam("password") String password) {
@@ -100,6 +107,9 @@ public class LoginController {
                 _userAuth.setIdentifier(id);
                 _userAuth.setCredential(token);
                int userId= userService.saveUser(userInfo,_userAuth);
+                UserValue userValue=new UserValue();
+                userValue.setUserId(userId);
+                userValueMapper.insertSelective(userValue);
                if(userId==0){
                    logger.info("GitHub用户信息保存失败");
 
@@ -148,7 +158,7 @@ public class LoginController {
     @RequestMapping(value = "sinaOauth",method =RequestMethod.GET)
     public ModelAndView sinaOauth(@RequestParam("code") String code, HttpServletResponse response){
         try{
-            JSONObject msg= JSONObject.parseObject(SinaOauth2.getAccessToken(code));
+            JSONObject msg= JSONObject.parseObject(SinaOauth2.getAccessToken(code,url));
             String token=msg.getString("access_token");
             String uid=msg.getString("uid");
             String getUser=SinaOauth2.getUser(token,uid);
@@ -176,6 +186,9 @@ public class LoginController {
                 _userAuth.setIdentifier(id);
                 _userAuth.setCredential(token);
                 int userId= userService.saveUser(userInfo,_userAuth);
+                UserValue userValue=new UserValue();
+                userValue.setUserId(userId);
+                userValueMapper.insertSelective(userValue);
                 if(userId==0){
                     logger.info("Sina用户信息保存失败");
 
@@ -220,8 +233,8 @@ public class LoginController {
 
     @RequestMapping(value = "FromSina",method =RequestMethod.GET)
     public void fromSina(HttpServletResponse response) throws IOException {
-        String url=SinaOauth2.getAuthUrl();
-        response.sendRedirect(url);
+        String url_=SinaOauth2.getAuthUrl(url);
+        response.sendRedirect(url_);
     }
 
     @RequestMapping(value = "wechatOauth",method =RequestMethod.GET)

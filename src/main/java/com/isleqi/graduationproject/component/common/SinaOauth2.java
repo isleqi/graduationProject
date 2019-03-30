@@ -11,16 +11,17 @@ import java.util.Map;
 public class SinaOauth2 {
     private final static Logger logger = LoggerFactory.getLogger(SinaOauth2.class);
 
-    @Value("${web.url}")
-    static String url;
+
 
     static String appKey = "524337518";
     static String appSecret = "bd5dc471062ac73d09fd1ba7d7129441";
-    static String redirect_URI = url+"/app/login/sinaOauth";
 
 
-    public static String getAccessToken(String code) {
 
+
+
+    public static String getAccessToken(String code,String webUrl) {
+        String redirect_URI = webUrl+"/app/login/sinaOauth";
         Map<String,String> param=new HashMap<>();
         param.put("client_id",appKey);
         param.put("client_secret",appSecret);
@@ -50,7 +51,8 @@ public class SinaOauth2 {
 
     }
 
-    public static String getAuthUrl() {
+    public static String getAuthUrl(String url) {
+     String redirect_URI = url+"/app/login/sinaOauth";
         return "https://api.weibo.com/oauth2/authorize?client_id=" +
                 appKey +
                 "&response_type=code" +
